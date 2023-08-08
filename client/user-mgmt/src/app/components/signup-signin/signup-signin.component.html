@@ -1,0 +1,36 @@
+<div class="signup-signin-container">
+  <div class="titleContainer">
+    <h2 class="title">{{title}}</h2>
+    <app-user-manager-text></app-user-manager-text>
+  </div>
+  <div mat-dialog-content>
+    <form 
+      [formGroup]="signupSigninForm" 
+      (ngSubmit)="signupSignin()">
+      <mat-form-field>
+        <mat-label>email address</mat-label>
+        <input type="email" matInput>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>password</mat-label>
+        <input type="password" matInput>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>password confirm</mat-label>
+        <input type="password" matInput>
+      </mat-form-field>
+    </form>
+    <p class="switch-message">
+      <span>{{switchSignupSigninMessage}}</span>
+      <strong>
+        <span 
+          class="switch-action-message"
+          (click)="switchMode()"> {{switchActionMessage}}</span>
+      </strong>
+    </p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="signupSignin()">{{signupSigninButtonText}}</button>
+    <button mat-button mat-dialog-close>Close</button>
+  </div>
+</div>

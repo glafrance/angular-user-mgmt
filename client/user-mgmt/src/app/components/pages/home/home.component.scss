@@ -1,0 +1,38 @@
+@import "variables";
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h2, h4 {
+  margin: 0;
+}
+.title {
+  color: $lightBlue900;
+}
+.features-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 100px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.features-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.checkmark {
+  transform: scale(1.2);
+  color: $greenA700;
+}
+.explore {
+  color: white;
+}
