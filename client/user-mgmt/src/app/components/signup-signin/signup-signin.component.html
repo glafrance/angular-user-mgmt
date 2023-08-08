@@ -7,18 +7,26 @@
     <form 
       [formGroup]="signupSigninForm" 
       (ngSubmit)="signupSignin()">
-      <mat-form-field>
-        <mat-label>email address</mat-label>
-        <input type="email" matInput>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>password</mat-label>
-        <input type="password" matInput>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>password confirm</mat-label>
-        <input type="password" matInput>
-      </mat-form-field>
+      <div class="form-control-container">
+        <mat-form-field>
+          <mat-label>email address</mat-label>
+          <input type="email" matInput formControlName="email">
+        </mat-form-field>
+        <p class="form-error-text" *ngIf="email?.errors?.['required'] && email?.touched">Email is required</p>  
+      </div>
+      <div class="form-control-container">
+        <mat-form-field>
+          <mat-label>password</mat-label>
+          <input type="password" matInput formControlName="password">
+        </mat-form-field>
+        <p class="form-error-text" *ngIf="password?.errors?.['required'] && password?.touched">Password is required</p>
+      </div>
+      <div class="form-control-container">
+        <mat-form-field>
+          <mat-label>password confirm</mat-label>
+          <input type="password" matInput formControlName="passwordConfirm">
+        </mat-form-field>
+      </div>
     </form>
     <p class="switch-message">
       <span>{{switchSignupSigninMessage}}</span>
@@ -28,10 +36,12 @@
           (click)="switchMode()"> {{switchActionMessage}}</span>
       </strong>
     </p>
-    <h4 class="forgot-password">Forgot Password</h4>
+    <h4 
+      class="forgot-password"
+      (click)="forgotPassword()">Forgot Password</h4>
   </div>
   <div mat-dialog-actions>
-    <button mat-button (click)="signupSignin()">{{signupSigninButtonText}}</button>
+    <button mat-button class="action-button" (click)="signupSignin()">{{signupSigninButtonText}}</button>
     <button mat-button mat-dialog-close>Close</button>
   </div>
 </div>

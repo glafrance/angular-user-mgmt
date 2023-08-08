@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Form } from "@angular/forms";
+import { FormBuilder, FormGroup, FormControl, Form, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import Constants from "../constants/constants";
@@ -17,8 +17,8 @@ export class SignupSigninComponent implements OnInit {
   switchActionMessage: string = "";
 
   signupSigninForm: FormGroup = new FormGroup({
-    email: new FormControl(""),
-    password: new FormControl(""),
+    email: new FormControl("", [Validators.required]),
+    password: new FormControl("", [Validators.required]),
     passwordConfirm: new FormControl("")
   });
 
@@ -27,6 +27,10 @@ export class SignupSigninComponent implements OnInit {
   ngOnInit(): void {
     this.setDynamicText();
   }
+
+  get email() { return this.signupSigninForm.get("email") };
+  get password() { return this.signupSigninForm.get("password") };
+  get passwordConfirm() { return this.signupSigninForm.get("passwordConfirm") };
 
   setDynamicText() {
     if (this.data && this.data.mode) {
@@ -58,5 +62,9 @@ export class SignupSigninComponent implements OnInit {
 
   signupSignin() {
     console.log("signup/signin");
+  }
+
+  forgotPassword() {
+    console.log("forgot password");
   }
 }
