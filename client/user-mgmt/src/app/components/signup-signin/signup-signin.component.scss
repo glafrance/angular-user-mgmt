@@ -46,6 +46,9 @@ mat-form-field {
   cursor: pointer;
   display: inline;
 }
-button.action-button {
+.action-button {
   color: $lightBlue900;
+}
+.action-button:disabled {
+  color: $lightBlue100;
 }

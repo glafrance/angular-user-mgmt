@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
 import AuthService from "src/app/services/auth.service";
-import Constants from "../constants/constants";
+import Constants from "../../constants/constants";
 
 @Component({
   selector: "app-header",

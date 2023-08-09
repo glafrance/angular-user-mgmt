@@ -10,21 +10,21 @@
       <div class="form-control-container">
         <mat-form-field>
           <mat-label>email address</mat-label>
-          <input type="email" matInput formControlName="email">
+          <input type="email" matInput formControlName="email" (input)="disableButtons()">
         </mat-form-field>
         <p class="form-error-text" *ngIf="email?.errors?.['required'] && email?.touched">Email is required</p>  
       </div>
       <div class="form-control-container">
         <mat-form-field>
           <mat-label>password</mat-label>
-          <input type="password" matInput formControlName="password">
+          <input type="password" matInput formControlName="password" (input)="disableButtons()">
         </mat-form-field>
         <p class="form-error-text" *ngIf="password?.errors?.['required'] && password?.touched">Password is required</p>
       </div>
       <div class="form-control-container">
         <mat-form-field>
           <mat-label>password confirm</mat-label>
-          <input type="password" matInput formControlName="passwordConfirm">
+          <input type="password" matInput formControlName="passwordConfirm" (input)="disableButtons()">
         </mat-form-field>
       </div>
     </form>
@@ -41,7 +41,10 @@
       (click)="forgotPassword()">Forgot Password</h4>
   </div>
   <div mat-dialog-actions>
-    <button mat-button class="action-button" (click)="signupSignin()">{{signupSigninButtonText}}</button>
+    <button 
+      mat-button class="action-button" 
+      (click)="signupSignin()"
+      [disabled]="disableButtons()">{{signupSigninButtonText}}</button>
     <button mat-button mat-dialog-close>Close</button>
   </div>
 </div>

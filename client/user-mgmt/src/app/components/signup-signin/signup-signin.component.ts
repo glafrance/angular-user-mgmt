@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Form, Validators } from "@angular/forms";
+import { FormGroup, FormControl, Form, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import Constants from "../constants/constants";
+import Constants from "../../constants/constants";
+import Utils from "../../utils/utils";
 
 @Component({
   selector: "app-signup-signin",
@@ -17,8 +18,16 @@ export class SignupSigninComponent implements OnInit {
   switchActionMessage: string = "";
 
   signupSigninForm: FormGroup = new FormGroup({
-    email: new FormControl("", [Validators.required]),
-    password: new FormControl("", [Validators.required]),
+    email: new FormControl("", [
+      Validators.required, 
+      Validators.email
+    ]),
+    password: new FormControl("", [
+      Validators.required, 
+      Validators.minLength(8),
+      Validators.maxLength(15),
+      Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}/)
+    ]),
     passwordConfirm: new FormControl("")
   });
 
@@ -66,5 +75,16 @@ export class SignupSigninComponent implements OnInit {
 
   forgotPassword() {
     console.log("forgot password");
+  }
+
+  disableButtons() {
+    let disabled = true;
+    const emailInvalid = Utils.isInvalid(this.email);
+    const passwordInvalid = Utils.isInvalid(this.password);
+    const formInvalid = Utils.isInvalid(this.signupSigninForm);
+
+    disabled = (emailInvalid || passwordInvalid || formInvalid);
+
+    return disabled;
   }
 }
