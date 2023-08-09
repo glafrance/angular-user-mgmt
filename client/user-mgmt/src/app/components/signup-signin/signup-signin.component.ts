@@ -1,9 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Form, Validators } from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import Constants from "../../constants/constants";
 import Utils from "../../utils/utils";
+import ValidationUtils from "src/app/utils/validationUtils";
 
 @Component({
   selector: "app-signup-signin",
@@ -11,7 +12,6 @@ import Utils from "../../utils/utils";
   styleUrls: ["./signup-signin.component.scss"]
 })
 export class SignupSigninComponent implements OnInit {
-  mode: string = "";
   title: string = "";
   signupSigninButtonText: string = "";
   switchSignupSigninMessage: string = "";
@@ -35,6 +35,8 @@ export class SignupSigninComponent implements OnInit {
 
   ngOnInit(): void {
     this.setDynamicText();
+
+    this.signupSigninForm.addValidators([ValidationUtils.passwordsMatch(this.password, this.passwordConfirm)]);
   }
 
   get email() { return this.signupSigninForm.get("email") };
@@ -59,6 +61,15 @@ export class SignupSigninComponent implements OnInit {
 
   switchMode() {
     if (this.data && this.data.mode) {
+      this.signupSigninForm.patchValue({
+        passwordConfirm: ""
+      });
+
+      if (this.password && this.passwordConfirm) {
+        this.password.reset();
+        this.passwordConfirm.reset();
+      }
+
       if (this.data.mode === Constants.SIGNUP) {
         this.data.mode = Constants.SIGNIN;
       } else if (this.data.mode === Constants.SIGNIN) {

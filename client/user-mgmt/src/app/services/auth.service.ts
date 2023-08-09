@@ -11,7 +11,8 @@ export default class AuthService {
 
   showSignupSignin(mode: string): void {
     const dialogRef = this.dialog.open(SignupSigninComponent, {
-      data: { mode }
+      data: { mode },
+      autoFocus: false
     });
   
     dialogRef.afterClosed().subscribe(result => {
