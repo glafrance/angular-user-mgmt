@@ -2,7 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+import AuthService from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
+import { HttpService } from "src/app/services/http.service";
 import Utils from "../../utils/utils";
 import ValidationUtils from "src/app/utils/validationUtils";
 
@@ -31,7 +33,11 @@ export class SignupSigninComponent implements OnInit {
     passwordConfirm: new FormControl("")
   });
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(
+    private authService: AuthService,
+    private httpService: HttpService,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit(): void {
     this.setDynamicText();
@@ -81,7 +87,30 @@ export class SignupSigninComponent implements OnInit {
   }
 
   signupSignin() {
-    console.log("signup/signin");
+    const config = {
+      email: this.email?.value,
+      password: this.password?.value
+    };
+
+    if (this.data.mode === Constants.SIGNUP) {
+      this.authService.signUp(config).subscribe({
+        next: (result: any) => {
+          console.log(`Signup result ${result}`);
+        },
+        error: (err: any) => {
+          console.log("SignupSigninComponent - error signing up user", err);
+        }
+      });  
+    } else if (this.data.mode === Constants.SIGNIN) {
+      this.authService.signIn(config).subscribe({
+        next: (result: any) => {
+          console.log(`Signin result ${result}`);
+        },
+        error: (err: any) => {
+          console.log("SignupSigninComponent - error signing in user", err);
+        }
+      });  
+    }
   }
 
   forgotPassword() {
