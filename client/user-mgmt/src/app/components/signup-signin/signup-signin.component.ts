@@ -94,7 +94,7 @@ export class SignupSigninComponent implements OnInit {
 
     if (this.data.mode === Constants.SIGNUP) {
       this.authService.signUp(config).subscribe({
-        next: (result: any) => {
+        next: (result: any) => {          
           console.log(`Signup result ${result}`);
         },
         error: (err: any) => {

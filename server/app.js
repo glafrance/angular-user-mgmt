@@ -1,12 +1,15 @@
 const express = require("express");
-const app = express();
-
 const cors = require("cors");
+const mongoose = require("mongoose");
+const constants = require("./constants/constants");
+const usersRouter = require("./routes/users");
+
+const app = express();
 app.use(cors());
+app.use(express.json());
 
 const PORT = 4002;
 
-const mongoose = require("mongoose");
 mongoose.connect('mongodb://localhost:27017/usermgmt',
   {
     useNewUrlParser: true,
@@ -14,9 +17,8 @@ mongoose.connect('mongodb://localhost:27017/usermgmt',
   }
 );
 
-const usersRouter = require("./routes/users");
 
-app.use("/users", usersRouter);
+app.use(`/${constants.SIGNUP}`, usersRouter);
 
 app.listen(PORT, () => {
   console.log(`User management server listening on port ${PORT}`);
