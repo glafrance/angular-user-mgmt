@@ -9,6 +9,7 @@
     <h4 class="slogan"><em>User Management Made Easy</em></h4>
   </div>
   <div class="menu-container">
-    <h3 (click)="onSignupSignin()">Signup/Signin</h3>
+    <h3 *ngIf="!signedIn" (click)="onSignupSignin()">Signup/Signin</h3>
+    <h3 *ngIf="signedIn" (click)="onSignout()">Signout</h3>
   </div>
 </header>

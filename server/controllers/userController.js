@@ -55,7 +55,6 @@ exports.signinUser = (req, res) => {
 
     User.findOne({ email, password })
       .then((user) => {
-        console.log(user);
         if (user) {
           return res.status(200).json({ 
             result: constants.SUCCESS

@@ -143,6 +143,7 @@ export class SignupSigninComponent implements OnInit {
       this.authService.signIn(config).subscribe({
         next: (result: any) => {
           if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
+            this.authService.setSignedIn(true);
             this.dialog.open(MessageDialogComponent, {
               data: { 
                 title: "Signin Success",
