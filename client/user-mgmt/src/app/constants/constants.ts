@@ -1,4 +1,9 @@
 export default class Constants {
+  public static ROUTER_URLS = {
+    HOME: "home",
+    USER_PROFILE: "user_profile"
+  };
+
   public static SIGNIN = "Signin";
   public static SIGNUP = "Signup";
   public static USER_MANAGER = "User Manager";
@@ -15,8 +20,8 @@ export default class Constants {
   };
 
   public static API_ENDPOINTS = {
-    SIGNUP: "signup",
-    SIGNIN: "signin"
+    SIGNUP: "user/signup",
+    SIGNIN: "user/signin"
   };
 
   // Response flags

@@ -18,6 +18,7 @@ import { HomeComponent } from "./components/pages/home/home.component";
 import { MessageDialogComponent } from "./components/common/message-dialog/message-dialog.component";
 import { SignupSigninComponent } from "./components/signup-signin/signup-signin.component";
 import { UserManagerText } from "./components/shared/user-manager-text/user-manager-text.component";
+import { UserProfileComponent } from "./components/pages/user-profile/user-profile.component";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { UserManagerText } from "./components/shared/user-manager-text/user-mana
     HomeComponent,
     MessageDialogComponent,
     SignupSigninComponent,
-    UserManagerText
+    UserManagerText,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,

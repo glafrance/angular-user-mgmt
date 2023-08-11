@@ -18,7 +18,7 @@ mongoose.connect('mongodb://localhost:27017/usermgmt',
 );
 
 
-app.use(`/${constants.SIGNUP}`, usersRouter);
+app.use(`/${constants.USER}`, usersRouter);
 
 app.listen(PORT, () => {
   console.log(`User management server listening on port ${PORT}`);

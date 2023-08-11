@@ -12,6 +12,6 @@ export class HomeComponent {
   constructor(private authService: AuthService){}
 
   onSignupSignin() {
-    this.authService.showSignupSignin(Constants.SIGNUP);    
+    this.authService.showSignupSignin(Constants.SIGNIN);    
   }
 }

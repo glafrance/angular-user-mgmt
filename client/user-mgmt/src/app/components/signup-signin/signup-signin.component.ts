@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from "@angular/router";
 
 import AuthService from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
@@ -36,6 +37,8 @@ export class SignupSigninComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
+    private dialogRef: MatDialogRef<SignupSigninComponent>,
+    private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -103,6 +106,8 @@ export class SignupSigninComponent implements OnInit {
               }
             });
 
+            this.password?.reset();
+            this.passwordConfirm?.reset();
             this.switchMode();
           } else {
             let message = "Something went wrong with your signup, please try again.";
@@ -137,11 +142,54 @@ export class SignupSigninComponent implements OnInit {
     } else if (this.data.mode === Constants.SIGNIN) {
       this.authService.signIn(config).subscribe({
         next: (result: any) => {
-          console.log(`Signin result ${result}`);
+          if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
+            this.dialog.open(MessageDialogComponent, {
+              data: { 
+                title: "Signin Success",
+                message: "You have successfully signed in to User Manager."
+              }
+            });
+
+            this.signupSigninForm?.reset();
+            this.dialogRef.close();
+            this.router.navigateByUrl(Constants.ROUTER_URLS.USER_PROFILE);
+          } else {
+            this.email?.reset();
+            this.password?.reset();
+            this.passwordConfirm?.reset();
+
+            let message = "Something went wrong when signing in, please try again.";
+
+            if (result && result[Constants.ERROR] && result[Constants.ERROR][Constants.ERROR]) {
+              message = result[Constants.ERROR][Constants.ERROR];
+            }
+
+            this.dialog.open(MessageDialogComponent, {
+              data: { 
+                title: "Signin Failure",
+                message
+              }
+            });
+          }
         },
-        error: (err: any) => {
-          console.log("SignupSigninComponent - error signing in user", err);
-        }
+        error: (result: any) => {
+          this.email?.reset();
+          this.password?.reset();
+          this.passwordConfirm?.reset();
+
+          let message = "Something went wrong when signing in, please try again.";
+
+          if (result && result[Constants.ERROR] && result[Constants.ERROR][Constants.ERROR]) {
+            message = result[Constants.ERROR][Constants.ERROR];
+          }
+
+          this.dialog.open(MessageDialogComponent, {
+            data: { 
+              title: "Signin Failure",
+              message
+            }
+          });
+      }
       });  
     }
   }
@@ -156,7 +204,11 @@ export class SignupSigninComponent implements OnInit {
     const passwordInvalid = Utils.isInvalid(this.password);
     const formInvalid = Utils.isInvalid(this.signupSigninForm);
 
-    disabled = (emailInvalid || passwordInvalid || formInvalid);
+    if (this.data.mode === Constants.SIGNUP) {
+      disabled = (emailInvalid || passwordInvalid || formInvalid);
+    } else if (this.data.mode === Constants.SIGNIN) {
+      disabled = (emailInvalid || passwordInvalid);
+    }
 
     return disabled;
   }
