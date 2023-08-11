@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AppComponent } from './app.component';
 import { AppHeader } from "./components/app-header/app-header.component";
 import { HomeComponent } from "./components/pages/home/home.component";
+import { MessageDialogComponent } from "./components/common/message-dialog/message-dialog.component";
 import { SignupSigninComponent } from "./components/signup-signin/signup-signin.component";
 import { UserManagerText } from "./components/shared/user-manager-text/user-manager-text.component";
 
@@ -23,6 +24,7 @@ import { UserManagerText } from "./components/shared/user-manager-text/user-mana
     AppComponent,
     AppHeader,
     HomeComponent,
+    MessageDialogComponent,
     SignupSigninComponent,
     UserManagerText
   ],

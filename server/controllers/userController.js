@@ -17,7 +17,10 @@ exports.signupUser = (req, res) => {
     User.findOne({ email })
       .then((user) => {
         if (user) {
-          return res.status(400).json({ error: constants.USER_EXISTS_ERROR });
+          return res.status(400).json({ 
+            result: constants.FAILURE,
+            error: constants.USER_EXISTS_ERROR 
+          });
         } else {
           const newUser = new User({ email, password });
           newUser.save();
@@ -25,9 +28,14 @@ exports.signupUser = (req, res) => {
           User.findOne({ email })
           .then((user) => {
             if (user) {
-              return res.status(200).json({ msg: constants.SIGNUP_SUCCESSFUL });
+              return res.status(200).json({ 
+                result: constants.SUCCESS
+              });
             } else {
-              return res.status(500).json({ error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` });
+              return res.status(500).json({ 
+                result: constants.FAILURE,
+                error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` 
+              });
             }
           });    
         }

@@ -18,4 +18,10 @@ export default class Constants {
     SIGNUP: "signup",
     SIGNIN: "signin"
   };
+
+  // Response flags
+  public static RESULT = "result";
+  public static SUCCESS = "success";
+  public static FAILURE = "failure";
+  public static ERROR = "error";
 }

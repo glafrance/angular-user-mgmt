@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 import AuthService from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
-import { HttpService } from "src/app/services/http.service";
+import { MessageDialogComponent } from "../common/message-dialog/message-dialog.component";
 import Utils from "../../utils/utils";
 import ValidationUtils from "src/app/utils/validationUtils";
 
@@ -35,7 +35,7 @@ export class SignupSigninComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private httpService: HttpService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -94,12 +94,45 @@ export class SignupSigninComponent implements OnInit {
 
     if (this.data.mode === Constants.SIGNUP) {
       this.authService.signUp(config).subscribe({
-        next: (result: any) => {          
-          console.log(`Signup result ${result}`);
+        next: (result: any) => {
+          if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
+            this.dialog.open(MessageDialogComponent, {
+              data: { 
+                title: "Signup Success",
+                message: "Your signup with User Manager was successful."
+              }
+            });
+
+            this.switchMode();
+          } else {
+            let message = "Something went wrong with your signup, please try again.";
+
+            if (result && result[Constants.ERROR] && result[Constants.ERROR][Constants.ERROR]) {
+              message = result[Constants.ERROR][Constants.ERROR];
+            }
+
+            this.dialog.open(MessageDialogComponent, {
+              data: { 
+                title: "Signup Failure",
+                message
+              }
+            });
+          }
         },
-        error: (err: any) => {
-          console.log("SignupSigninComponent - error signing up user", err);
-        }
+        error: (result: any) => {
+          let message = "Something went wrong with your signup, please try again.";
+
+          if (result && result[Constants.ERROR] && result[Constants.ERROR][Constants.ERROR]) {
+            message = result[Constants.ERROR][Constants.ERROR];
+          }
+
+          this.dialog.open(MessageDialogComponent, {
+            data: { 
+              title: "Signup Failure",
+              message
+            }
+          });
+      }
       });  
     } else if (this.data.mode === Constants.SIGNIN) {
       this.authService.signIn(config).subscribe({
