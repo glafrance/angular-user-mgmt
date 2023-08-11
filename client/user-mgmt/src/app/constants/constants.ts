@@ -1,5 +1,6 @@
 export default class Constants {
   public static ROUTER_URLS = {
+    EMPTY: "/",
     HOME: "home",
     USER_PROFILE: "user_profile"
   };

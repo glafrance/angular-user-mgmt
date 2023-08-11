@@ -24,8 +24,8 @@
         </mat-form-field>
         <div class="errors-container">
           <p class="form-error-text" *ngIf="password?.errors?.['required'] && password?.touched">Password is required</p>
-          <p class="form-error-text" *ngIf="(password?.errors?.['minlength'] || password?.errors?.['maxlength']) && password?.touched">Invalid password length (8 - 15 characters)</p>
-          <div *ngIf="password?.errors?.['pattern'] && password?.touched">
+          <p class="form-error-text" *ngIf="data.mode === 'signup' && (password?.errors?.['minlength'] || password?.errors?.['maxlength']) && password?.touched">Invalid password length (8 - 15 characters)</p>
+          <div *ngIf="data.mode === 'signup' && password?.errors?.['pattern'] && password?.touched">
             <p class="form-error-text">Password requirements:</p>
             <p class="form-error-text">1 uppercase letter</p>
             <p class="form-error-text">1 lowercase letter</p>

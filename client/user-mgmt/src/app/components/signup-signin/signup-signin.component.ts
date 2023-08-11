@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from "@angular/router";
 
-import AuthService from "src/app/services/auth.service";
+import { AuthService } from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
 import { MessageDialogComponent } from "../common/message-dialog/message-dialog.component";
 import Utils from "../../utils/utils";

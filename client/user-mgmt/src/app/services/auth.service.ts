@@ -11,12 +11,14 @@ import Utils from "../utils/utils";
 @Injectable({
   providedIn: "root"
 })
-export default class AuthService {
+export class AuthService {
   constructor(
     public dialog: MatDialog,
     private httpService: HttpService,
     private router: Router
-  ) {}
+  ) {
+    console.log("auth.service constructor");
+  }
 
   ///////////////////////// START SIGNUP/SIGNIN SECTION //////////////////////////
   signUp(config: any): Observable<any> {
@@ -92,13 +94,9 @@ export default class AuthService {
   ////////////////////////// END SIGNUP/SIGNIN SECTION ///////////////////////////
 
   showSignupSignin(mode: string): void {
-    const dialogRef = this.dialog.open(SignupSigninComponent, {
+    this.dialog.open(SignupSigninComponent, {
       data: { mode },
       autoFocus: false
-    });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
     });
   }
 }
