@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import Constants from "./constants/constants";
 import { HomeComponent } from "./components/pages/home/home.component";
+import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
 import { signedInGuard } from "./guards/signedIn.guard";
 import { UserProfileComponent } from "./components/pages/user-profile/user-profile.component";
 
@@ -13,7 +14,8 @@ const routes: Routes = [
     path: Constants.ROUTER_URLS.USER_PROFILE, 
     component: UserProfileComponent,
     canActivate: [signedInGuard]
-  }
+  },
+  {path: '**', component: PageNotFoundComponent}
 ];
 
 @NgModule({

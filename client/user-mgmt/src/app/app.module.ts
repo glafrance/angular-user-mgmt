@@ -16,6 +16,7 @@ import { AppComponent } from './app.component';
 import { AppHeader } from "./components/app-header/app-header.component";
 import { HomeComponent } from "./components/pages/home/home.component";
 import { MessageDialogComponent } from "./components/common/message-dialog/message-dialog.component";
+import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
 import { PageTemplateOneComponent } from "./components/pages/page-template-one/page-template-one.component";
 import { SignupSigninComponent } from "./components/signup-signin/signup-signin.component";
 import { UserManagerText } from "./components/shared/user-manager-text/user-manager-text.component";
@@ -27,6 +28,7 @@ import { UserProfileComponent } from "./components/pages/user-profile/user-profi
     AppHeader,
     HomeComponent,
     MessageDialogComponent,
+    PageNotFoundComponent,
     PageTemplateOneComponent,
     SignupSigninComponent,
     UserManagerText,
