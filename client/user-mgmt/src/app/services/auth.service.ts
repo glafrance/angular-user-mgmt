@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 
 import Constants from "../constants/constants";
 import { HttpService } from "./http.service";
+import { LocalStorageService } from "./local-storage.service";
 import { SignupSigninComponent } from "../components/signup-signin/signup-signin.component";
 import Utils from "../utils/utils";
 
@@ -15,6 +16,7 @@ export class AuthService {
   constructor(
     public dialog: MatDialog,
     private httpService: HttpService,
+    private localStorageService: LocalStorageService,
     private router: Router
   ) {
     console.log("auth.service constructor");
@@ -80,6 +82,13 @@ export class AuthService {
 
   setSignedIn(signedIn: boolean) {
     this._isSignedIn = signedIn;
+
+    if (signedIn) {
+      this.localStorageService.saveToLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY, signedIn);
+    } else {
+      this.localStorageService.clearFromLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY);
+    }
+
     this._signedInObservable.next(signedIn);
   }
 

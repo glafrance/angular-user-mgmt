@@ -30,4 +30,7 @@ export default class Constants {
   public static SUCCESS = "success";
   public static FAILURE = "failure";
   public static ERROR = "error";
+
+  // Local storage keys
+  public static SIGNED_IN_LOCAL_STORAGE_KEY = "signed_in";
 }
