@@ -6,11 +6,41 @@
 form {
   display: flex;
   flex-direction: column;
+  gap: 30px;
+}
+.fields-container {
+  display: flex;
+  gap: 50px;
+  margin-top: 35px;
+}
+.fields-column {
+  display: flex;
+  flex-direction: column;
   gap: 15px;
 }
 .form-control-container {
   display: flex;
   flex-direction: column;
+}
+.account-image-container {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  height: 50px;
+}
+.account-image-container p {
+  margin: 0;
+  margin-right: 20px;
+}
+.account-image-icon {
+  transform: scale(2.5);
+  cursor: pointer;
+}
+.profile-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  cursor: pointer;
 }
 mat-form-field {
   width: 400px;
