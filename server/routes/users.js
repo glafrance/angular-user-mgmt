@@ -6,4 +6,7 @@ const constants = require("../constants/constants");
 router.post(`/${constants.SIGNUP}`, userController.signupUser);
 router.post(`/${constants.SIGNIN}`, userController.signinUser);
 
+router.get(`/${constants.PROFILE}/:userId`, userController.getUserProfile);
+router.post(`/${constants.PROFILE}/:userId`, userController.setUserProfile);
+
 module.exports = router;

@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ToastrService } from 'ngx-toastr';
 
+import Constants from "src/app/constants/constants";
+import { UserService } from "src/app/services/user.service";
 import Utils from "src/app/utils/utils";
 import ValidationUtils from "src/app/utils/validationUtils";
 
@@ -23,6 +25,7 @@ export class UserProfileComponent implements OnInit {
       minlength: false,
       maxLength: false
     },
+    changed: false,
     touched: false,
     value: ""
   };
@@ -66,10 +69,22 @@ export class UserProfileComponent implements OnInit {
     workPhone: new FormControl("", [Validators.maxLength(10)])
   });
 
-  constructor(private toastr: ToastrService) {}
+  constructor(
+    private toastr: ToastrService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.userProfileForm.addValidators([ValidationUtils.passwordsMatch(this.password, this.passwordConfirm)]);
+
+    this.userService.getUserProfileObservable().subscribe({
+      next: (result: any) => {
+        console.log("updated user profile", result);
+      },
+      error: (err: any) => {
+        console.log("UserProfileComponent - error getting user profile update", err);
+      }
+    });
   }
 
   get email() { return this.userProfileForm.get("email") };
@@ -87,7 +102,12 @@ export class UserProfileComponent implements OnInit {
   get workPhone() { return this.userProfileForm.get("workPhone") };
 
   dataChanged(evt: any, field: string) {
-    const value = evt.target.value;    
+    let value = evt.target.value;    
+
+    if (Utils.isNotNullOrUndefinedOrEmpty(value) && value["trim"]) {
+      value = value.trim();
+    }
+
     const originalValue = this.originalData[field];
 
     this.formDataChanged = (value !== originalValue);
@@ -95,24 +115,48 @@ export class UserProfileComponent implements OnInit {
     if (field === "bioBlurb") {
       this.bioBlurb.value = value;
 
-      if (Utils.isNotNullOrUndefined(value)) {
+      this.bioBlurb.changed = (value !== originalValue);
+
+      this.bioBlurb.errors.minlength = false;
+      this.bioBlurb.errors.maxlength = false;
+
+      if (Utils.isNotNullOrUndefinedOrEmpty(value)) {
         this.bioBlurb.errors.minlength = value.length < 50;
         this.bioBlurb.errors.maxlength = value.length > 1000;  
       }
     }
   }
 
+  // The submit button should be disabled under these conditions:
+  //    - user has changed nothing on the form, has not changed bio blurb, and has not selected a file for upload
+  //    - user has changed data on form, and form is invalid
+  //    - user has changed bio blurb and it is either too short or too long
+  //
+  // Button should not be disabled if:
+  //    - user has selected image for upload OR
+  //    - user has changed bio blurb and has no errors (not too short or too long) OR
+  //    - user has changed form data and there form is valid
   disableButton() {
-    let disabled = true;
+    const userChangedFormData = this.formDataChanged;
+    const formIsInvalid = this.userProfileForm.invalid;
+    const userSelectedImage = Utils.isNotNullOrUndefined(this.fileToUpload);
+    const userChangedBioBlurb = this.bioBlurb.changed;
+    const bioBlurbErrors = this.bioBlurb.errors.minlength || this.bioBlurb.errors.maxlength;
 
-    disabled = (
-      !this.formDataChanged || 
-      this.userProfileForm.invalid ||
-      this.bioBlurb.errors.minlength ||
-      this.bioBlurb.errors.maxlength
-    );
+    if (
+      !userChangedFormData && 
+      !userChangedBioBlurb && !userSelectedImage
+    ) {
+      return true;
+    }
 
-    return disabled;
+    if (
+      (userChangedFormData && formIsInvalid) || (userChangedBioBlurb && bioBlurbErrors)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   onBioBlurbBlur() {
@@ -153,8 +197,44 @@ export class UserProfileComponent implements OnInit {
   }
 
   submitUserProfile() {
-    console.log(this.userProfileForm.value);
-    console.log(this.bioBlurb.value);
-    console.log(this.fileToUpload);
+    const data = this.getValidProfileData();
+
+    this.userService.setUserProfile(data).subscribe({
+      next: (result: any) => {
+        if (
+          result && 
+          result[Constants.RESULT] && 
+          result[Constants.RESULT] === Constants.SUCCESS &&
+          result[Constants.DATA]
+        ) {
+          console.log(result[Constants.DATA]);
+        }    
+      },
+      error: (err: any) => {
+        console.log("UserProfileComponent - error submitting user profile", err);
+      }
+    });
+  }
+
+  getValidProfileData() {
+    let data = this.userProfileForm.value;
+
+    if (
+      data && 
+      Object.keys(data) && 
+      Object.keys(data).length
+    ) {
+      for (let key of Object.keys(data)) {
+        if (Utils.isNullOrUndefinedOrEmpty(data[key])) {
+          delete data[key];
+        }
+      }
+    }
+
+    if (this.bioBlurb.value) {
+      data[Constants.BIO_BLURB] = this.bioBlurb.value;
+    }
+
+    return data;
   }
 }

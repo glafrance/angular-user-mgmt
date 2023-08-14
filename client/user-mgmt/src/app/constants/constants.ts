@@ -8,6 +8,9 @@ export default class Constants {
   public static SIGNIN = "Signin";
   public static SIGNUP = "Signup";
   public static USER_MANAGER = "User Manager";
+  public static USER_ID = "userId";
+  public static DATA = "data";
+  public static BIO_BLURB = "bioBlurb";
 
   public static INVALID = "INVALID";
 
@@ -21,6 +24,7 @@ export default class Constants {
   };
 
   public static API_ENDPOINTS = {
+    PROFILE: "user/profile",
     SIGNUP: "user/signup",
     SIGNIN: "user/signin"
   };
@@ -33,4 +37,5 @@ export default class Constants {
 
   // Local storage keys
   public static SIGNED_IN_LOCAL_STORAGE_KEY = "signed_in";
+  public static USER_ID_LOCAL_STORAGE_KEY = "userId";
 }

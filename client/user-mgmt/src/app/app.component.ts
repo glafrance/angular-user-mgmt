@@ -18,9 +18,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     const signedIn = this.localStorageService.getFromLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY);
+    const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
 
     if (Utils.isNotNullOrUndefined(signedIn) && !!signedIn) {
-      this.authService.setSignedIn(true);
+      this.authService.setSignedIn(true, userId);
     }
   }
 }

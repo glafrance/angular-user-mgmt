@@ -18,9 +18,7 @@ export class AuthService {
     private httpService: HttpService,
     private localStorageService: LocalStorageService,
     private router: Router
-  ) {
-    console.log("auth.service constructor");
-  }
+  ) {}
 
   ///////////////////////// START SIGNUP/SIGNIN SECTION //////////////////////////
   signUp(config: any): Observable<any> {
@@ -80,13 +78,15 @@ export class AuthService {
     return this._signedInObservable;
   }
 
-  setSignedIn(signedIn: boolean) {
+  setSignedIn(signedIn: boolean, userId?: any) {
     this._isSignedIn = signedIn;
 
     if (signedIn) {
       this.localStorageService.saveToLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY, signedIn);
+      this.localStorageService.saveToLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY, userId);
     } else {
       this.localStorageService.clearFromLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY);
+      this.localStorageService.clearFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
     }
 
     this._signedInObservable.next(signedIn);

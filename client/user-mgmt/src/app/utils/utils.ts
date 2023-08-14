@@ -24,6 +24,20 @@ export default class Utils {
     return retVal;
   }
 
+  public static isNullOrUndefinedOrEmpty(value: any) {
+    let retVal = (
+      value === null ||
+      value === undefined ||
+      value === ""
+    );
+
+    if (!retVal && value["isArray"]) {
+      retVal = !value.length      
+    }
+
+    return retVal;
+  }
+
   public static isInvalid(item: any) {
     return (item && item.status === Constants.INVALID);  
   }

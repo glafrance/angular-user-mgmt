@@ -142,8 +142,13 @@ export class SignupSigninComponent implements OnInit {
     } else if (this.data.mode === Constants.SIGNIN) {
       this.authService.signIn(config).subscribe({
         next: (result: any) => {
-          if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
-            this.authService.setSignedIn(true);
+          if (
+            result && 
+            result[Constants.RESULT] && 
+            result[Constants.RESULT] === Constants.SUCCESS &&
+            Utils.isNotNullOrUndefined(result[Constants.USER_ID])
+          ) {
+            this.authService.setSignedIn(true, result[Constants.USER_ID]);
             this.dialog.open(MessageDialogComponent, {
               data: { 
                 title: "Signin Success",
