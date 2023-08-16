@@ -92,6 +92,30 @@ export class UserService {
     return this._userProfileImageObservable;
   }
 
+  getUserProfileImage() {
+    const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
+
+    if (Utils.isNotNullOrUndefined(userId)) {
+      const config = {
+        url: `${Constants.API_ENDPOINTS.PROFILE_IMAGE}/${userId}`,
+        method: Constants.HTTP_METHODS.GET
+      };
+  
+      this.httpService.doHttp(config).subscribe({
+        next: (result) => {
+          if (result) {
+            this._userProfileImageObservable.next(result);
+          } else {
+            console.log("UserService - error getting user profile image, no result");
+          }
+        },
+        error: (err) => {
+          console.log("UserService - error getting user profile image", err);
+        }
+      });
+    }
+  }
+
   uploadUserProfileImage(profileImage: File) {
     let resultObservable: any = new Observable();
 

@@ -72,6 +72,36 @@ exports.signinUser = (req, res) => {
   }
 };
 
+exports.getUserProfile = (req, res) => {
+  if (
+    req && 
+    req.params && 
+    utils.isNotNullOrUndefined(req.params.userId)
+  ) {    
+    const _id = req.params.userId;
+
+    User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
+      .then((user) => {
+        if (user) {
+          let userData = {...user._doc};
+          delete userData.password;
+          delete userData.__v;
+          delete userData._id;
+
+          return res.status(200).json({ 
+            result: constants.SUCCESS,
+            data: userData
+          });
+        } else {
+          return res.status(501).json({ 
+            result: constants.FAILURE,
+            error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
+          });
+        }
+      });
+  }
+};
+
 exports.setUserProfile = async (req, res) => {
   if (
     req && 
@@ -113,35 +143,7 @@ exports.setUserProfile = async (req, res) => {
   }
 };
 
-exports.uploadUserProfileImage = async (req, res) => {
-  console.log("one");
-  if (
-    req && 
-    req.params && 
-    utils.isNotNullOrUndefined(req.params.userId)
-  ) {    
-    console.log("two");
-    const _id = req.params.userId;
-
-    if(!req.file) {
-      console.log("three");
-      return res.status(500).json({ 
-        result: constants.FAILURE,
-        error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
-      });
-    } else {
-      console.log("four");
-      const imageUrl = `images/${req.file.filename}`;
-
-      return res.status(200).json({ 
-        result: constants.SUCCESS,
-        imageUrl
-      });
-    }    
-  }
-};
-
-exports.getUserProfile = (req, res) => {
+exports.getUserProfileImage = (req, res) => {
   if (
     req && 
     req.params && 
@@ -153,20 +155,77 @@ exports.getUserProfile = (req, res) => {
       .then((user) => {
         if (user) {
           let userData = {...user._doc};
-          delete userData.password;
-          delete userData.__v;
-          delete userData._id;
 
-          return res.status(200).json({ 
-            result: constants.SUCCESS,
-            data: userData
-          });
+          if (userData && utils.isNotNullOrUndefined(userData.profileImageUrl)) {
+            return res.status(200).json({ 
+              result: constants.SUCCESS,
+              data: userData.profileImageUrl
+            });  
+          } else {
+            return res.status(501).json({ 
+              result: constants.FAILURE,
+              error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
+            });  
+          }
         } else {
           return res.status(501).json({ 
             result: constants.FAILURE,
-            error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
+            error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
           });
         }
       });
+  }
+};
+
+exports.uploadUserProfileImage = async (req, res) => {
+  if (
+    req && 
+    req.params && 
+    utils.isNotNullOrUndefined(req.params.userId)
+  ) {    
+    const _id = req.params.userId;
+
+    if(!req.file) {
+      return res.status(500).json({ 
+        result: constants.FAILURE,
+        error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
+      });
+    } else {
+      const userProfileImageUrl = `http://localhost:4002/images/${req.file.filename}`;
+
+      await User.findOneAndUpdate(
+        { _id: new mongoose.Types.ObjectId(_id) }, 
+        {
+          profileImageUrl: userProfileImageUrl
+        }, 
+        {
+          new: true
+        }
+      );
+  
+      User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
+        .then((user) => {
+          if (user) {
+            let userData = {...user._doc};
+
+            if (userData.profileImageUrl === userProfileImageUrl) {
+              return res.status(200).json({ 
+                result: constants.SUCCESS,
+                userProfileImageUrl
+              });        
+            } else {
+              return res.status(501).json({ 
+                result: constants.FAILURE,
+                error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
+              });              
+            }
+          } else {
+            return res.status(501).json({ 
+              result: constants.FAILURE,
+              error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
+            });
+          }
+        });
+    }    
   }
 };

@@ -93,11 +93,23 @@ export class UserProfileComponent implements OnInit {
         }
       },
       error: (err: any) => {
-        console.log("UserProfileComponent - error getting user profile update", err);
+        console.log("UserProfileComponent - error getting user profile", err);
+      }
+    });
+
+    this.userService.getUserProfileImageObservable().subscribe({
+      next: (result) => {
+        if (result && result.data) {
+          this.profileImageSrc = result.data;
+        }
+      }, 
+      error: (err: any) => {
+        console.log("UserProfileComponent - error getting user profile image", err);
       }
     });
 
     this.userService.getUserProfile();
+    this.userService.getUserProfileImage();
   }
 
   get email() { return this.userProfileForm.get("email") };
