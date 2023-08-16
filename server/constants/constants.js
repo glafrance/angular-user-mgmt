@@ -13,6 +13,7 @@ exports.USER_COULD_NOT_BE_CREATED_ERROR = "Signup failed, please try again.";
 exports.USER_EXISTS_ERROR = "A user with the provided email already exists. Signin or click 'forgot password'.";
 exports.SIGNIN_FAILURE = "Signin failed, please check your email and password and try again.";
 exports.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR = "Updating your profile failed, please try again.";
+exports.USER_PROFILE_COULD_NOT_BE_FOUND = "user_profile_could_not_be_found";
 
 // Response flags
 exports.SUCCESS = "success";

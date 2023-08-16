@@ -2,10 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 import { AuthService } from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
-import { MessageDialogComponent } from "../common/message-dialog/message-dialog.component";
 import Utils from "../../utils/utils";
 import ValidationUtils from "src/app/utils/validationUtils";
 
@@ -39,6 +39,7 @@ export class SignupSigninComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<SignupSigninComponent>,
     private router: Router,
+    private toastr: ToastrService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -99,13 +100,7 @@ export class SignupSigninComponent implements OnInit {
       this.authService.signUp(config).subscribe({
         next: (result: any) => {
           if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
-            this.dialog.open(MessageDialogComponent, {
-              data: { 
-                title: "Signup Success",
-                message: "Your signup with User Manager was successful."
-              }
-            });
-
+            this.toastr.success("Your signup with User Manager was successful.", "Signup Success");
             this.password?.reset();
             this.passwordConfirm?.reset();
             this.switchMode();
@@ -116,12 +111,7 @@ export class SignupSigninComponent implements OnInit {
               message = result[Constants.ERROR][Constants.ERROR];
             }
 
-            this.dialog.open(MessageDialogComponent, {
-              data: { 
-                title: "Signup Failure",
-                message
-              }
-            });
+            this.toastr.error("Something went wrong with your signup, please try again.", "Signup Failure");
           }
         },
         error: (result: any) => {
@@ -131,13 +121,8 @@ export class SignupSigninComponent implements OnInit {
             message = result[Constants.ERROR][Constants.ERROR];
           }
 
-          this.dialog.open(MessageDialogComponent, {
-            data: { 
-              title: "Signup Failure",
-              message
-            }
-          });
-      }
+          this.toastr.error("Something went wrong with your signup, please try again.", "Signup Failure");
+        }
       });  
     } else if (this.data.mode === Constants.SIGNIN) {
       this.authService.signIn(config).subscribe({
@@ -149,13 +134,7 @@ export class SignupSigninComponent implements OnInit {
             Utils.isNotNullOrUndefined(result[Constants.USER_ID])
           ) {
             this.authService.setSignedIn(true, result[Constants.USER_ID]);
-            this.dialog.open(MessageDialogComponent, {
-              data: { 
-                title: "Signin Success",
-                message: "You have successfully signed in to User Manager."
-              }
-            });
-
+            this.toastr.success("You have successfully signed in to User Manager.", "Signin Success");
             this.signupSigninForm?.reset();
             this.dialogRef.close();
             this.router.navigateByUrl(Constants.ROUTER_URLS.USER_PROFILE);
@@ -170,12 +149,7 @@ export class SignupSigninComponent implements OnInit {
               message = result[Constants.ERROR][Constants.ERROR];
             }
 
-            this.dialog.open(MessageDialogComponent, {
-              data: { 
-                title: "Signin Failure",
-                message
-              }
-            });
+            this.toastr.error(message, "Signin Failure");
           }
         },
         error: (result: any) => {
@@ -189,12 +163,7 @@ export class SignupSigninComponent implements OnInit {
             message = result[Constants.ERROR][Constants.ERROR];
           }
 
-          this.dialog.open(MessageDialogComponent, {
-            data: { 
-              title: "Signin Failure",
-              message
-            }
-          });
+          this.toastr.error(message, "Signin Failure");
       }
       });  
     }

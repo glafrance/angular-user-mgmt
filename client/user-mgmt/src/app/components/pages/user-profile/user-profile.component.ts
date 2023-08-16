@@ -79,12 +79,25 @@ export class UserProfileComponent implements OnInit {
 
     this.userService.getUserProfileObservable().subscribe({
       next: (result: any) => {
-        console.log("updated user profile", result);
+        if (result && result.data) {
+          const data = result.data;
+
+          if (data[Constants.BIO_BLURB]) {
+            this.bioBlurb.value = data[Constants.BIO_BLURB];
+            delete data[Constants.BIO_BLURB];
+          }
+
+          this.userProfileForm.patchValue({
+            ...data
+          });
+        }
       },
       error: (err: any) => {
         console.log("UserProfileComponent - error getting user profile update", err);
       }
     });
+
+    this.userService.getUserProfile();
   }
 
   get email() { return this.userProfileForm.get("email") };
@@ -177,7 +190,7 @@ export class UserProfileComponent implements OnInit {
       const size = profileImageFile.size;
 
       if (size > 1048576) {
-        this.toastr.error("Profile images must be 1MB (1048576 bytes) or less", "ERROR - File Size")
+        this.toastr.error("Profile images must be 1MB (1048576 bytes) or less", "ERROR - File Size");
       } else {
         this.fileToUpload = profileImageFile;
 
@@ -199,21 +212,7 @@ export class UserProfileComponent implements OnInit {
   submitUserProfile() {
     const data = this.getValidProfileData();
 
-    this.userService.setUserProfile(data).subscribe({
-      next: (result: any) => {
-        if (
-          result && 
-          result[Constants.RESULT] && 
-          result[Constants.RESULT] === Constants.SUCCESS &&
-          result[Constants.DATA]
-        ) {
-          console.log(result[Constants.DATA]);
-        }    
-      },
-      error: (err: any) => {
-        console.log("UserProfileComponent - error submitting user profile", err);
-      }
-    });
+    this.userService.setUserProfile(data);
   }
 
   getValidProfileData() {
