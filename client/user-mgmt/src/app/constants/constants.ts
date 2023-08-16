@@ -25,6 +25,7 @@ export default class Constants {
 
   public static API_ENDPOINTS = {
     PROFILE: "user/profile",
+    PROFILE_IMAGE: "user/profile_image",
     SIGNUP: "user/signup",
     SIGNIN: "user/signin"
   };

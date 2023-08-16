@@ -212,6 +212,22 @@ export class UserProfileComponent implements OnInit {
   submitUserProfile() {
     const data = this.getValidProfileData();
 
+    if (this.fileToUpload) {
+      this.userService.uploadUserProfileImage(this.fileToUpload).subscribe({
+        next: (result: any) => {
+          console.log(result);
+          if (result) {                    
+            console.log("UserService - successfully uploaded user profile image");
+          } else {
+            console.log("UserService - error uploading user profile image, no result");
+          }
+        },
+        error: (err: any) => {
+          console.log("UserService - error uploading user profile image", err);
+        }
+      });
+    }
+    
     this.userService.setUserProfile(data);
   }
 

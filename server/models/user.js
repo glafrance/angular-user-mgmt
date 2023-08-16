@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
   homePhone: String,
   mobilePhone: String,
   workPhone: String,
-  bioBlurb: String 
+  bioBlurb: String,
+  profileImageUrl: String 
 });
 
 const User = mongoose.model("User", UserSchema);

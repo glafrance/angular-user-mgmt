@@ -1,4 +1,3 @@
-
 exports.isNotNullOrUndefined = (value) => {
   const result = (value !== null && value !== undefined);
   return result;

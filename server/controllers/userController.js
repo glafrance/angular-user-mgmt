@@ -113,6 +113,34 @@ exports.setUserProfile = async (req, res) => {
   }
 };
 
+exports.uploadUserProfileImage = async (req, res) => {
+  console.log("one");
+  if (
+    req && 
+    req.params && 
+    utils.isNotNullOrUndefined(req.params.userId)
+  ) {    
+    console.log("two");
+    const _id = req.params.userId;
+
+    if(!req.file) {
+      console.log("three");
+      return res.status(500).json({ 
+        result: constants.FAILURE,
+        error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
+      });
+    } else {
+      console.log("four");
+      const imageUrl = `images/${req.file.filename}`;
+
+      return res.status(200).json({ 
+        result: constants.SUCCESS,
+        imageUrl
+      });
+    }    
+  }
+};
+
 exports.getUserProfile = (req, res) => {
   if (
     req && 

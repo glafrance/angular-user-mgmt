@@ -11,13 +11,13 @@ import Utils from "../utils/utils";
   providedIn: "root"
 })
 export class UserService {
-  _userProfileObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-
   constructor(
     private httpService: HttpService,
     private localStorageService: LocalStorageService,
     private toastr: ToastrService
   ) {}
+
+  _userProfileObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   getUserProfileObservable(): BehaviorSubject<any> {
     return this._userProfileObservable;
@@ -81,6 +81,35 @@ export class UserService {
           }
         });
       }  
+    }
+
+    return resultObservable;
+  }
+
+  _userProfileImageObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
+  getUserProfileImageObservable(): BehaviorSubject<any> {
+    return this._userProfileImageObservable;
+  }
+
+  uploadUserProfileImage(profileImage: File) {
+    let resultObservable: any = new Observable();
+
+    if (profileImage) {
+      const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
+
+      if (Utils.isNotNullOrUndefined(userId)) { 
+        const formData = new FormData(); 
+        formData.append("file", profileImage, profileImage.name);
+  
+        const config = {
+          url: `${Constants.API_ENDPOINTS.PROFILE_IMAGE}/${userId}`,
+          method: Constants.HTTP_METHODS.POST,
+          data: formData
+        };
+    
+        resultObservable = this.httpService.doHttp(config);
+      }
     }
 
     return resultObservable;
