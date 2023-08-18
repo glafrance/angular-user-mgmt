@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -16,6 +17,11 @@ const UserSchema = new mongoose.Schema({
   bioBlurb: String,
   profileImageUrl: String 
 });
+
+UserSchema.statics.EncryptPassword = async (password) => {  
+  const hash = await bcrypt.hash(password, 12);  
+  return hash;
+};
 
 const User = mongoose.model("User", UserSchema);
 

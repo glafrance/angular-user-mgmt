@@ -6,6 +6,7 @@ import { ToastrService } from "ngx-toastr";
 
 import { AuthService } from "src/app/services/auth.service";
 import Constants from "../../constants/constants";
+import { RequestResetPasswordComponent } from "./sub-components/request-reset-password/request-reset-password.component";
 import Utils from "../../utils/utils";
 import ValidationUtils from "src/app/utils/validationUtils";
 
@@ -170,7 +171,9 @@ export class SignupSigninComponent implements OnInit {
   }
 
   forgotPassword() {
-    console.log("forgot password");
+    this.dialog.open(RequestResetPasswordComponent, {
+      autoFocus: false
+    });
   }
 
   disableButtons() {

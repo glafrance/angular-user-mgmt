@@ -2,6 +2,7 @@ export default class Constants {
   public static ROUTER_URLS = {
     EMPTY: "/",
     HOME: "home",
+    RESPONSE_RESET_PASSWORD: "response-reset-password",
     USER_PROFILE: "user-profile"
   };
 
@@ -25,9 +26,13 @@ export default class Constants {
 
   public static API_ENDPOINTS = {
     PROFILE: "user/profile",
-    PROFILE_IMAGE: "user/profile_image",
+    PROFILE_IMAGE: "user/profile-image",
     SIGNUP: "user/signup",
-    SIGNIN: "user/signin"
+    SIGNIN: "user/signin",
+    REQUEST_RESET_PASSWORD: "user/request-reset-password",
+    RESPONSE_RESET_PASSWORD: "user/response-reset-password",
+    VALIDATE_RESET_TOKEN: "user/validate-reset-token"
+
   };
 
   // Response flags

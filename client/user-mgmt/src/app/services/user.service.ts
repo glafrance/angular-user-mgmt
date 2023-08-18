@@ -138,4 +138,63 @@ export class UserService {
 
     return resultObservable;
   }
+
+  requestResetPassword(email: string) {
+    let resultObservable: any = new Observable();
+
+    if (Utils.isNotNullOrUndefined(email)) { 
+      const config = {
+        url: `${Constants.API_ENDPOINTS.REQUEST_RESET_PASSWORD}`,
+        method: Constants.HTTP_METHODS.POST,
+        data: {
+          email
+        }
+      };
+  
+      console.log(config);
+      resultObservable = this.httpService.doHttp(config);
+    }
+
+    return resultObservable;
+  }
+
+  getNewPassword(resetToken: string, newPassword: string) {
+    let resultObservable: any = new Observable();
+
+    if (
+      Utils.isNotNullOrUndefined(resetToken) && 
+      Utils.isNotNullOrUndefined(newPassword)
+    ) { 
+      const config = {
+        url: `${Constants.API_ENDPOINTS.RESPONSE_RESET_PASSWORD}`,
+        method: Constants.HTTP_METHODS.POST,
+        data: {
+          resetToken,
+          newPassword
+        }
+      };
+  
+      resultObservable = this.httpService.doHttp(config);
+    }
+
+    return resultObservable;
+  }
+
+  validatePasswordToken(resetToken: string) {
+    let resultObservable: any = new Observable();
+
+    if (Utils.isNotNullOrUndefined(resetToken)) { 
+      const config = {
+        url: `${Constants.API_ENDPOINTS.VALIDATE_RESET_TOKEN}`,
+        method: Constants.HTTP_METHODS.POST,
+        data: {
+          resetToken
+        }
+      };
+  
+      resultObservable = this.httpService.doHttp(config);
+    }
+
+    return resultObservable;
+  }  
 }

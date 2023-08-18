@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 const constants = require("./constants/constants");
 const usersRouter = require("./routes/users");
 

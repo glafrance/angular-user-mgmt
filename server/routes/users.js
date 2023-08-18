@@ -40,4 +40,8 @@ router.post(`/${constants.PROFILE}/:userId`, userController.setUserProfile);
 router.get(`/${constants.PROFILE_IMAGE}/:userId`, userController.getUserProfileImage);
 router.post(`/${constants.PROFILE_IMAGE}/:userId`, upload.single("file"), userController.uploadUserProfileImage);
 
+router.post(`/${constants.REQUEST_RESET_PASSWORD}`, userController.resetPassword);
+router.post(`/${constants.RESPONSE_RESET_PASSWORD}`, userController.newPassword);
+router.post(`/${constants.VALIDATE_RESET_TOKEN}`, userController.validatePasswordToken);
+
 module.exports = router;

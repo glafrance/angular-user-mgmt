@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import Constants from "./constants/constants";
 import { HomeComponent } from "./components/pages/home/home.component";
-import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
+import { ResponseResetPasswordComponent } from "./components/signup-signin/sub-components/response-reset-password/response-reset-password.component";
 import { signedInGuard } from "./guards/signedIn.guard";
 import { UserProfileComponent } from "./components/pages/user-profile/user-profile.component";
 
@@ -15,7 +15,11 @@ const routes: Routes = [
     component: UserProfileComponent,
     canActivate: [signedInGuard]
   },
-  {path: '**', component: PageNotFoundComponent}
+  {
+      path: `${Constants.ROUTER_URLS.RESPONSE_RESET_PASSWORD}/:token`,
+      component: ResponseResetPasswordComponent
+  },
+  { path: "**", redirectTo: Constants.ROUTER_URLS.HOME }
 ];
 
 @NgModule({
