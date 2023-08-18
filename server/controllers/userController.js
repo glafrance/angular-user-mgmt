@@ -39,7 +39,8 @@ exports.signupUser = (req, res) => {
               .then(user => {
                 res.status(200).json({ result: constants.SUCCESS });
               })
-              .catch(() => {
+              .catch((err) => {
+                console.log("Error signing up user - one", err);
                 res.status(500).json({ 
                   result: constants.FAILURE,
                   error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` 
@@ -48,13 +49,15 @@ exports.signupUser = (req, res) => {
           });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error signing up user - two", err);
         res.status(500).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` 
         });
       });
   } else {
+    console.log("Error signing up user - three");
     res.status(500).json({ 
       result: constants.FAILURE,
       error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` 
@@ -84,6 +87,7 @@ exports.signinUser = (req, res) => {
                 result: constants.SUCCESS
               });    
             } else {
+              console.log("Error signing in user - one");
               return res.status(501).json({ 
                 result: constants.FAILURE,
                 error: constants.SIGNIN_FAILURE 
@@ -91,19 +95,22 @@ exports.signinUser = (req, res) => {
             }
           });
         } else {
+          console.log("Error signing in user - two");
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.SIGNIN_FAILURE 
           });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error signing in user - three", err);
         res.status(500).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.SIGNIN_FAILURE}` 
         });
       });
   } else {
+    console.log("Error signing in user - four");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.SIGNIN_FAILURE 
@@ -132,19 +139,22 @@ exports.getUserProfile = (req, res) => {
             data: userData
           });
         } else {
+          console.log("Error getting user profile - one");
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_COULD_NOT_BE_FOUND 
           });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error getting user profile - two", err);
         res.status(500).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_COULD_NOT_BE_FOUND}` 
         });
       });
   } else {
+    console.log("Error getting user profile - three");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_COULD_NOT_BE_FOUND 
@@ -184,19 +194,22 @@ exports.setUserProfile = async (req, res) => {
             data: userData
           });
         } else {
+          console.log("Error setting user profile - one");
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
           });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error setting user profile - two", err);
         res.status(500).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR}` 
         });
       });
   } else {
+    console.log("Error setting user profile - three");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
@@ -223,25 +236,29 @@ exports.getUserProfileImage = (req, res) => {
               data: userData.profileImageUrl
             });  
           } else {
+            console.log("Error getting user profile image - one");
             return res.status(501).json({ 
               result: constants.FAILURE,
               error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
             });  
           }
         } else {
+          console.log("Error getting user profile image - two");
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
           });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error getting user profile image - three", err);
         res.status(500).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR}` 
         });
       });
   } else {
+    console.log("Error getting user profile image - four");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
@@ -258,6 +275,7 @@ exports.uploadUserProfileImage = async (req, res) => {
     const _id = req.params.userId;
 
     if(!req.file) {
+      console.log("Error uploading user profile image - one");
       return res.status(500).json({ 
         result: constants.FAILURE,
         error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
@@ -286,19 +304,22 @@ exports.uploadUserProfileImage = async (req, res) => {
                 userProfileImageUrl
               });        
             } else {
+              console.log("Error uploading user profile image - two");
               return res.status(501).json({ 
                 result: constants.FAILURE,
                 error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
               });              
             }
           } else {
+            console.log("Error uploading user profile image - three");
             return res.status(501).json({ 
               result: constants.FAILURE,
               error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
             });
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log("Error uploading user profile image - four", err);
           res.status(500).json({ 
             result: constants.FAILURE,
             error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR}` 
@@ -306,6 +327,7 @@ exports.uploadUserProfileImage = async (req, res) => {
         });;
     }    
   } else {
+    console.log("Error uploading user profile image - five");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
@@ -323,70 +345,70 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({ email })
 
     if (!user) {
+      console.log("Error creating reset password email and link - one");
       return res.status(501).json({ 
         result: constants.FAILURE,
         error: constants.RESET_PASSWORD_FAILED 
       });
     }
 
-    PasswordResetToken.create({ _userEmail: user.email, resetToken: crypto.randomBytes(16).toString('hex') })
-      .then(resetToken => {
-        const token = PasswordResetToken.find(
-          { 
-            _userEmail: user.email, 
-            resetToken: { 
-              $ne: resetToken.resetToken 
-            } 
+    PasswordResetToken.deleteMany({ _userEmail: user.email})
+      .then(() => {
+        PasswordResetToken.create({ _userEmail: user.email, resetToken: crypto.randomBytes(16).toString('hex') })
+        .then(resetToken => {          
+          res.status(200).json({ 
+            result: constants.SUCCESS
+          });  
+  
+          // user here is the email address that will send the reset password email with link
+          // if gmail, pass should be the app password setup in the google account
+          const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            port: 465,
+            auth: {
+              user: 'SENDER_EMAIL_ADDRESS',
+              pass: 'SENDER_APP_PASSWORD'
+            }
+          });
+  
+  
+          // "from" here is the email address that will send the reset password email with link
+          const mailOptions = {
+            to: user.email,
+            from: 'SENDER_EMAIL_ADDRESS',
+            subject: 'User Manager Password Reset',
+            text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
+            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            'http://localhost:4200/response-reset-password/' + resetToken.resetToken + '\n\n' +
+            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
           }
-        );
-
-        if (token) {
-          PasswordResetToken.deleteOne({_userEmail: token._userEmail, resetToken: token.resetToken});
-        }
-        
-        res.status(200).json({ 
-          result: constants.SUCCESS
-        });  
-
-        // user here is the email address that will send the reset password email with link
-        // if gmail, pass should be the app password setup in the google account
-        const transporter = nodemailer.createTransport({
-          service: 'Gmail',
-          port: 465,
-          auth: {
-            user: 'SENDERS_EMAIL_ADDRESS',
-            pass: 'SENDERS_GOOGLE_APP_PASSWORD'
-          }
-        });
-
-
-        // "from" here is the email address that will send the reset password email with link
-        const mailOptions = {
-          to: user.email,
-          from: 'SENDERS_EMAIL_ADDRESS',
-          subject: 'User Manager Password Reset',
-          text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http://localhost:4200/response-reset-password/' + resetToken.resetToken + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-        }
-
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.log("err", err);
-          }
-          if (info) {
-            console.log("info", info);
-          }
-        });
+  
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.log("sendMail err", err);
+            }
+            if (info) {
+              // console.log("sendMail info", info);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log("Error creating reset password email and link - two", err);
+          return res.status(501).json({ 
+            result: constants.FAILURE,
+            error: err.message 
+          });
+        });        
       })
       .catch((err) => {
+        console.log("Error creating reset password email and link - three", err);
         return res.status(501).json({ 
           result: constants.FAILURE,
-          error: err.message 
-        });
+          error: constants.RESET_PASSWORD_FAILED 
+        });  
       });
   } else {
+    console.log("Error creating reset password email and link - three");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.EMAIL_IS_REQUIRED 
@@ -405,6 +427,7 @@ exports.validatePasswordToken = async (req, res) => {
       });
 
       if (!token) {
+        console.log("Error validating reset password token - one");
         return res.status(501).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
@@ -417,12 +440,14 @@ exports.validatePasswordToken = async (req, res) => {
             result: constants.SUCCESS
           });        
         }).catch((err) => {
+          console.log("Error validating reset password token - two", err);
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.RESET_PASSWORD_FAILED 
           });
         });
   } else {
+    console.log("Error validating reset password token - three");
     return res.status(501).json({ 
       result: constants.FAILURE,
       error: constants.TOKEN_IS_REQUIRED 
@@ -450,6 +475,7 @@ exports.newPassword = async (req, res) => {
           if (user) {
             return bcrypt.hash(newPassword, 10, (err, hash) => {
               if (err) {
+                console.log("Error resetting password - one", err);
                 return res.status(501).json({ 
                   result: constants.FAILURE,
                   error: constants.RESET_PASSWORD_FAILED 
@@ -469,7 +495,8 @@ exports.newPassword = async (req, res) => {
                   result: constants.SUCCESS
                 });        
               })
-              .catch(() => {
+              .catch((err) => {
+                console.log("Error resetting password - two", err);
                 return res.status(501).json({ 
                   result: constants.FAILURE,
                   error: constants.RESET_PASSWORD_FAILED 
@@ -483,20 +510,23 @@ exports.newPassword = async (req, res) => {
             });    
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log("Error resetting password - three", err);
           return res.status(501).json({ 
             result: constants.FAILURE,
             error: constants.RESET_PASSWORD_FAILED 
           });  
         });
       } else {
+        console.log("Error resetting password - four");
         return res.status(501).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
         });  
       }   
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error resetting password - five", err);
         return res.status(501).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
