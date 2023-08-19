@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
+const config = require("../config");
 const constants = require("../constants/constants");
 const PasswordResetToken = require("../models/password-reset-token");
 const User = require("../models/user");
@@ -21,14 +22,14 @@ exports.signupUser = (req, res) => {
     User.findOne({ email })
       .then((user) => {
         if (user) {
-          return res.status(400).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.USER_EXISTS_ERROR 
           });
         } else {
           return bcrypt.hash(password, 10, (err, hash) => {
             if (err) {
-              return res.status(400).json({ message: 'Error hashing password' });
+              return res.status(401).json({ message: 'Error hashing password' });
             }
             const body = {
               email,
@@ -41,7 +42,7 @@ exports.signupUser = (req, res) => {
               })
               .catch((err) => {
                 console.log("Error signing up user - one", err);
-                res.status(500).json({ 
+                res.status(401).json({ 
                   result: constants.FAILURE,
                   error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_COULD_NOT_BE_CREATED_ERROR}` 
                 });
@@ -82,13 +83,18 @@ exports.signinUser = (req, res) => {
 
           bcrypt.compare(password, hashStoredInDB).then((checkPasswordResult) => {
             if (checkPasswordResult) {
+              const jwt = utils.createJWT(user._id.toString());
+              const sessionId = utils.generateSessionId();
+
+              res.cookie(sessionId, jwt, { httpOnly: true, secure: true });
+
               return res.status(200).json({ 
                 userId: user._id,
                 result: constants.SUCCESS
               });    
             } else {
               console.log("Error signing in user - one");
-              return res.status(501).json({ 
+              return res.status(401).json({ 
                 result: constants.FAILURE,
                 error: constants.SIGNIN_FAILURE 
               });
@@ -96,7 +102,7 @@ exports.signinUser = (req, res) => {
           });
         } else {
           console.log("Error signing in user - two");
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.SIGNIN_FAILURE 
           });
@@ -104,14 +110,14 @@ exports.signinUser = (req, res) => {
       })
       .catch((err) => {
         console.log("Error signing in user - three", err);
-        res.status(500).json({ 
+        res.status(401).json({ 
           result: constants.FAILURE,
-          error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.SIGNIN_FAILURE}` 
+          error: constants.SIGNIN_FAILURE 
         });
       });
   } else {
     console.log("Error signing in user - four");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.SIGNIN_FAILURE 
     });
@@ -140,7 +146,7 @@ exports.getUserProfile = (req, res) => {
           });
         } else {
           console.log("Error getting user profile - one");
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_COULD_NOT_BE_FOUND 
           });
@@ -148,14 +154,14 @@ exports.getUserProfile = (req, res) => {
       })
       .catch((err) => {
         console.log("Error getting user profile - two", err);
-        res.status(500).json({ 
+        res.status(401).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_COULD_NOT_BE_FOUND}` 
         });
       });
   } else {
     console.log("Error getting user profile - three");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_COULD_NOT_BE_FOUND 
     });
@@ -195,7 +201,7 @@ exports.setUserProfile = async (req, res) => {
           });
         } else {
           console.log("Error setting user profile - one");
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
           });
@@ -203,14 +209,14 @@ exports.setUserProfile = async (req, res) => {
       })
       .catch((err) => {
         console.log("Error setting user profile - two", err);
-        res.status(500).json({ 
+        res.status(401).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR}` 
         });
       });
   } else {
     console.log("Error setting user profile - three");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR 
     });
@@ -237,14 +243,14 @@ exports.getUserProfileImage = (req, res) => {
             });  
           } else {
             console.log("Error getting user profile image - one");
-            return res.status(501).json({ 
+            return res.status(401).json({ 
               result: constants.FAILURE,
               error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
             });  
           }
         } else {
           console.log("Error getting user profile image - two");
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
           });
@@ -252,14 +258,14 @@ exports.getUserProfileImage = (req, res) => {
       })
       .catch((err) => {
         console.log("Error getting user profile image - three", err);
-        res.status(500).json({ 
+        res.status(401).json({ 
           result: constants.FAILURE,
           error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR}` 
         });
       });
   } else {
     console.log("Error getting user profile image - four");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
     });
@@ -276,7 +282,7 @@ exports.uploadUserProfileImage = async (req, res) => {
 
     if(!req.file) {
       console.log("Error uploading user profile image - one");
-      return res.status(500).json({ 
+      return res.status(401).json({ 
         result: constants.FAILURE,
         error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
       });
@@ -305,14 +311,14 @@ exports.uploadUserProfileImage = async (req, res) => {
               });        
             } else {
               console.log("Error uploading user profile image - two");
-              return res.status(501).json({ 
+              return res.status(401).json({ 
                 result: constants.FAILURE,
                 error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
               });              
             }
           } else {
             console.log("Error uploading user profile image - three");
-            return res.status(501).json({ 
+            return res.status(401).json({ 
               result: constants.FAILURE,
               error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
             });
@@ -320,7 +326,7 @@ exports.uploadUserProfileImage = async (req, res) => {
         })
         .catch((err) => {
           console.log("Error uploading user profile image - four", err);
-          res.status(500).json({ 
+          res.status(401).json({ 
             result: constants.FAILURE,
             error: `${constants.INTERNAL_SERVER_ERROR}: ${constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR}` 
           });
@@ -328,7 +334,7 @@ exports.uploadUserProfileImage = async (req, res) => {
     }    
   } else {
     console.log("Error uploading user profile image - five");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR 
     });
@@ -346,7 +352,7 @@ exports.resetPassword = async (req, res) => {
 
     if (!user) {
       console.log("Error creating reset password email and link - one");
-      return res.status(501).json({ 
+      return res.status(401).json({ 
         result: constants.FAILURE,
         error: constants.RESET_PASSWORD_FAILED 
       });
@@ -366,8 +372,8 @@ exports.resetPassword = async (req, res) => {
             service: 'Gmail',
             port: 465,
             auth: {
-              user: 'SENDER_EMAIL_ADDRESS',
-              pass: 'SENDER_APP_PASSWORD'
+              user: config.SENDER_EMAIL_ADDRESS,
+              pass: config.SENDER_APP_PASSWORD
             }
           });
   
@@ -375,7 +381,7 @@ exports.resetPassword = async (req, res) => {
           // "from" here is the email address that will send the reset password email with link
           const mailOptions = {
             to: user.email,
-            from: 'SENDER_EMAIL_ADDRESS',
+            from: config.SENDER_EMAIL_ADDRESS,
             subject: 'User Manager Password Reset',
             text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
@@ -394,7 +400,7 @@ exports.resetPassword = async (req, res) => {
         })
         .catch((err) => {
           console.log("Error creating reset password email and link - two", err);
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: err.message 
           });
@@ -402,14 +408,14 @@ exports.resetPassword = async (req, res) => {
       })
       .catch((err) => {
         console.log("Error creating reset password email and link - three", err);
-        return res.status(501).json({ 
+        return res.status(401).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
         });  
       });
   } else {
     console.log("Error creating reset password email and link - three");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.EMAIL_IS_REQUIRED 
     });
@@ -428,7 +434,7 @@ exports.validatePasswordToken = async (req, res) => {
 
       if (!token) {
         console.log("Error validating reset password token - one");
-        return res.status(501).json({ 
+        return res.status(401).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
         });
@@ -441,14 +447,14 @@ exports.validatePasswordToken = async (req, res) => {
           });        
         }).catch((err) => {
           console.log("Error validating reset password token - two", err);
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.RESET_PASSWORD_FAILED 
           });
         });
   } else {
     console.log("Error validating reset password token - three");
-    return res.status(501).json({ 
+    return res.status(401).json({ 
       result: constants.FAILURE,
       error: constants.TOKEN_IS_REQUIRED 
     });
@@ -476,7 +482,7 @@ exports.newPassword = async (req, res) => {
             return bcrypt.hash(newPassword, 10, (err, hash) => {
               if (err) {
                 console.log("Error resetting password - one", err);
-                return res.status(501).json({ 
+                return res.status(401).json({ 
                   result: constants.FAILURE,
                   error: constants.RESET_PASSWORD_FAILED 
                 });    
@@ -497,14 +503,14 @@ exports.newPassword = async (req, res) => {
               })
               .catch((err) => {
                 console.log("Error resetting password - two", err);
-                return res.status(501).json({ 
+                return res.status(401).json({ 
                   result: constants.FAILURE,
                   error: constants.RESET_PASSWORD_FAILED 
                 });      
               });
             });              
           } else {
-            return res.status(501).json({ 
+            return res.status(401).json({ 
               result: constants.FAILURE,
               error: constants.RESET_PASSWORD_FAILED 
             });    
@@ -512,14 +518,14 @@ exports.newPassword = async (req, res) => {
         })
         .catch((err) => {
           console.log("Error resetting password - three", err);
-          return res.status(501).json({ 
+          return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.RESET_PASSWORD_FAILED 
           });  
         });
       } else {
         console.log("Error resetting password - four");
-        return res.status(501).json({ 
+        return res.status(401).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
         });  
@@ -527,7 +533,7 @@ exports.newPassword = async (req, res) => {
       })
       .catch((err) => {
         console.log("Error resetting password - five", err);
-        return res.status(501).json({ 
+        return res.status(401).json({ 
           result: constants.FAILURE,
           error: constants.RESET_PASSWORD_FAILED 
         });      

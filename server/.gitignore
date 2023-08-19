@@ -3,6 +3,9 @@
 # User uploaded images
 /public/images
 
+# Private settings not stored in repository
+config.js
+
 # Compiled output
 /dist
 /tmp

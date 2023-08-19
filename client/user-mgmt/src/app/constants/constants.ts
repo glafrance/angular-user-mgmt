@@ -15,7 +15,7 @@ export default class Constants {
 
   public static INVALID = "INVALID";
 
-  public static BASE_URL = "http://localhost:4002";
+  public static BASE_URL = "https://localhost:4002";
 
   public static HTTP_METHODS = {
     GET: "get",

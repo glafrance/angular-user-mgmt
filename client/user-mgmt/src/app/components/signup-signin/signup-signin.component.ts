@@ -171,9 +171,7 @@ export class SignupSigninComponent implements OnInit {
   }
 
   forgotPassword() {
-    this.dialog.open(RequestResetPasswordComponent, {
-      autoFocus: false
-    });
+    this.dialog.open(RequestResetPasswordComponent);
   }
 
   disableButtons() {

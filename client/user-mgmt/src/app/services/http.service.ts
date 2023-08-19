@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import {shareReplay } from 'rxjs/operators'
 
 import Constants from "../constants/constants";
 import Utils from "../utils/utils";
@@ -32,16 +33,16 @@ export class HttpService {
 
     switch (method) {
       case Constants.HTTP_METHODS.GET:
-        result = this.httpClient.get(url, options);
+        result = this.httpClient.get(url, options).pipe(shareReplay());
         break;
       case Constants.HTTP_METHODS.POST:
-        result = this.httpClient.post(url, data, options);
+        result = this.httpClient.post(url, data, options).pipe(shareReplay());
         break;
       case Constants.HTTP_METHODS.DELETE:
-        result = this.httpClient.delete(url, options);
+        result = this.httpClient.delete(url, options).pipe(shareReplay());
         break;
       case Constants.HTTP_METHODS.PUT:
-        result = this.httpClient.put(url, data, options);
+        result = this.httpClient.put(url, data, options).pipe(shareReplay());
         break;
     }
 
