@@ -29,7 +29,10 @@ export class UserService {
     if (Utils.isNotNullOrUndefined(userId)) {
       const config = {
         url: `${Constants.API_ENDPOINTS.PROFILE}/${userId}`,
-        method: Constants.HTTP_METHODS.GET
+        method: Constants.HTTP_METHODS.GET,
+        options: {
+          withCredentials: true
+        }
       };
   
       this.httpService.doHttp(config).subscribe({
@@ -58,6 +61,9 @@ export class UserService {
         method: Constants.HTTP_METHODS.POST,
         data: {
           data: userData
+        },
+        options: {
+          withCredentials: true
         }
       };
   
@@ -98,7 +104,10 @@ export class UserService {
     if (Utils.isNotNullOrUndefined(userId)) {
       const config = {
         url: `${Constants.API_ENDPOINTS.PROFILE_IMAGE}/${userId}`,
-        method: Constants.HTTP_METHODS.GET
+        method: Constants.HTTP_METHODS.GET,
+        options: {
+          withCredentials: true
+        }
       };
   
       this.httpService.doHttp(config).subscribe({
@@ -129,7 +138,10 @@ export class UserService {
         const config = {
           url: `${Constants.API_ENDPOINTS.PROFILE_IMAGE}/${userId}`,
           method: Constants.HTTP_METHODS.POST,
-          data: formData
+          data: formData,
+          options: {
+            withCredentials: true
+          }
         };
     
         resultObservable = this.httpService.doHttp(config);

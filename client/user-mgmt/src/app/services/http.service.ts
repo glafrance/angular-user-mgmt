@@ -21,7 +21,6 @@ export class HttpService {
       Utils.isNotNullOrUndefined(config.method)
     ) {
       const url = `${Constants.BASE_URL}/${config.url}`;
-
       result = this.callApi(url, config.method, config["data"], config["options"]);
     }
 

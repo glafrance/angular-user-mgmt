@@ -35,6 +35,9 @@ export class AuthService {
         data: {
           email: config.email,
           password: config.password
+        },
+        options: {
+          withCredentials: true
         }
       };
 
@@ -60,6 +63,9 @@ export class AuthService {
         data: {
           email: config.email,
           password: config.password
+        },
+        options: {
+          withCredentials: true
         }
       };
 

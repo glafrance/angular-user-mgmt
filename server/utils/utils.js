@@ -22,9 +22,11 @@ exports.createJWT = (userId) => {
 
   const jwtBearerToken = jsonwebtoken.sign({}, RSA_PRIVATE_KEY, {
     algorithm: 'RS256',
-    expiresIn: 60,
+    expiresIn: 3600,
     subject: userId
   });
+
+  console.log(jwtBearerToken);
 
   return jwtBearerToken;
 };

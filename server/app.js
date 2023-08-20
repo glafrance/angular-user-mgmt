@@ -10,7 +10,14 @@ const constants = require("./constants/constants");
 const usersRouter = require("./routes/users");
 
 const app = express();
-app.use(cors());
+
+const corsSettings = {
+  origin: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+};
+
+app.use(cors(corsSettings));
 app.use(express.json());
 app.use(express.static('public'));
 
