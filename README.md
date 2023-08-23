@@ -22,7 +22,7 @@ The frontend is created using these technologies:
 The application includes these architectural features:
 - [Angular routing](https://angular.io/guide/routing-overview)
 - Guard (for routes requiring login)
-- [Constants files] (https://github.com/glafrance/angular-user-mgmt/blob/main/client/user-mgmt/src/app/constants/constants.ts)
-- [Utility files] (https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/utils)
-- [Services (auth service, http service, local storage service, user service, etc.)] (https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/services)
+- [Constants files](https://github.com/glafrance/angular-user-mgmt/blob/main/client/user-mgmt/src/app/constants/constants.ts)
+- [Utility files](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/utils)
+- [Services (auth service, http service, local storage service, user service, etc.)](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/services)
 - [Components (common components, page components, page template components, sub-components, etc.)](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/components)
