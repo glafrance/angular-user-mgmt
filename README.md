@@ -12,12 +12,13 @@ The goal of this repository is to provide an example of user management in a mod
 ### The code in this repository is example code, and is not production ready. Use it at your own risk. Enhance this code and perform all necessary tests to ensure it is secure and bug free if you use it in your projects.
 
 ## Frontend
-The frontend is created using these technologies:
+The frontend uses these technologies:
 - [Angular 15.2](https://angular.io)
 - [Angular Material](https://material.angular.io)
 - [ngx-toastr](https://www.npmjs.com/package/ngx-toastr)
 - [SASS (for styling, supercharged CSS)](https://sass-lang.com)
 - [TypeScript](https://www.typescriptlang.org)
+- [rsjs BehaviorSubject, Observable](https://rxjs.dev/guide/overview)
 
 The application includes these architectural features:
 - [Angular routing](https://angular.io/guide/routing-overview)
@@ -26,3 +27,7 @@ The application includes these architectural features:
 - [Utility files](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/utils)
 - [Services (auth service, http service, local storage service, user service, etc.)](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/services)
 - [Components (common components, page components, page template components, sub-components, etc.)](https://github.com/glafrance/angular-user-mgmt/tree/main/client/user-mgmt/src/app/components)
+
+## Backend
+The backend uses these technologies:
+
