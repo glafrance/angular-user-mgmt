@@ -15,3 +15,4 @@ The goal of this repository is to provide an example of user management in a mod
 The frontend is created using these technologies:
 - [Angular 15.2](https://angular.io)
 - [Angular Material](https://angular.io)
+- [I'm an inline-style link](https://www.google.com)
