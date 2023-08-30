@@ -1,0 +1,6 @@
+# mkcert localhost certificates for https
+localhost-key.pem
+localhost.pem
+
+user_management_public.key
+user_management.key

@@ -26,7 +26,7 @@ exports.createJWT = (userId) => {
     subject: userId
   });
 
-  console.log(jwtBearerToken);
+  // console.log(jwtBearerToken);
 
   return jwtBearerToken;
 };
