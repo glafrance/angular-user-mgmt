@@ -24,6 +24,10 @@ export class UserProfileComponent implements OnInit {
   // user has made changes to their profile data.
   formDataChanged: boolean = false;
 
+  // Also want to enable the save profile button if user 
+  // selected a different profile image.
+  profileImageChanged: boolean = false;
+
   profileImage: any;
   fileToUpload?: File;
   profileImageSrc: any;
@@ -113,6 +117,8 @@ export class UserProfileComponent implements OnInit {
           this.userProfileForm.patchValue({
             ...data
           });
+
+          this.originalData = data;
         }
       },
       error: (err: any) => {
@@ -164,27 +170,31 @@ export class UserProfileComponent implements OnInit {
       value = value.trim();
     }
 
-    const originalValue = this.originalData[field];
-
-    this.formDataChanged = (value !== originalValue);
-
-    // Bio blurb is not managed by the reactive form, 
-    // so we check for differences differently.
-    if (field === "bioBlurb") {
-      this.bioBlurb.value = value;
-
-      this.bioBlurb.changed = (value !== originalValue);
-
-      // If the value changed, reset any bio blurb min and max length errors.
-      this.bioBlurb.errors.minlength = false;
-      this.bioBlurb.errors.maxlength = false;
-
-      // After resetting bio blurb length errors, check 
-      // length of new value to trigger errors if necessary.
-      if (Utils.isNotNullOrUndefinedOrEmpty(value)) {
-        this.bioBlurb.errors.minlength = value.length < 50;
-        this.bioBlurb.errors.maxlength = value.length > 1000;  
-      }
+    if (field === Constants.PROFILE_IMAGE) {
+      this.profileImageChanged = value !== this.profileImage;
+    } else {  
+      const originalValue = this.originalData[field];
+  
+      this.formDataChanged = (value !== originalValue);
+  
+      // Bio blurb is not managed by the reactive form, 
+      // so we check for differences differently.
+      if (field === "bioBlurb") {
+        this.bioBlurb.value = value;
+  
+        this.bioBlurb.changed = (value !== originalValue);
+  
+        // If the value changed, reset any bio blurb min and max length errors.
+        this.bioBlurb.errors.minlength = false;
+        this.bioBlurb.errors.maxlength = false;
+  
+        // After resetting bio blurb length errors, check 
+        // length of new value to trigger errors if necessary.
+        if (Utils.isNotNullOrUndefinedOrEmpty(value)) {
+          this.bioBlurb.errors.minlength = value.length < 50;
+          this.bioBlurb.errors.maxlength = value.length > 1000;  
+        }
+      }  
     }
   }
 
@@ -199,6 +209,7 @@ export class UserProfileComponent implements OnInit {
   //    - user has changed form data and there form is valid
   disableButton() {
     const userChangedFormData = this.formDataChanged;
+    const profileImageChanged = this.profileImageChanged;
     const formIsInvalid = this.userProfileForm.invalid;
     const userSelectedImage = Utils.isNotNullOrUndefined(this.fileToUpload);
     const userChangedBioBlurb = this.bioBlurb.changed;
@@ -206,7 +217,9 @@ export class UserProfileComponent implements OnInit {
 
     if (
       !userChangedFormData && 
-      !userChangedBioBlurb && !userSelectedImage
+      !userChangedBioBlurb && 
+      !userSelectedImage &&
+      !profileImageChanged
     ) {
       return true;
     }
@@ -240,6 +253,7 @@ export class UserProfileComponent implements OnInit {
       const files = fileInput.files;
       const profileImageFile = files[0];
       const name = profileImageFile.name;
+      this.profileImage = name;
       const size = profileImageFile.size;
 
       if (size > 1048576) {
@@ -255,10 +269,8 @@ export class UserProfileComponent implements OnInit {
               self.profileImageSrc = fr.result;
           }
           fr.readAsDataURL(profileImageFile);
-      }        
+        }        
       }
-
-      this.profileImage = null;
     }
   }
 
@@ -269,7 +281,7 @@ export class UserProfileComponent implements OnInit {
     if (this.fileToUpload) {
       this.userService.uploadUserProfileImage(this.fileToUpload).subscribe({
         next: (result: any) => {
-          console.log(result);
+          // console.log(result);
           if (result) {                    
             console.log("UserService - successfully uploaded user profile image");
           } else {
@@ -282,7 +294,9 @@ export class UserProfileComponent implements OnInit {
       });
     }
     
-    this.userService.setUserProfile(data);
+    if (this.formDataChanged) {
+      this.userService.setUserProfile(data);
+    }
   }
 
   // User to get the user profile form data.

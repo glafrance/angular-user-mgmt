@@ -18,6 +18,7 @@ export default class Constants {
   public static DATA = "data";
   public static BIO_BLURB = "bioBlurb";
   public static INVALID = "INVALID";
+  public static PROFILE_IMAGE = "profileImage";
 
   // Constants for backend calls, HTTP methods.
   public static HTTP_METHODS = {

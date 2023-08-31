@@ -231,9 +231,24 @@ exports.setUserProfile = async (req, res) => {
     const _id = req.params.userId;
     const data = req.body.data;
 
+    // Because we update the user profile data with replaceOne(),
+    // we need to get the user profile image url and add that to
+    // the data passed to replaceOne().
+    await User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
+      .then((user) => {
+        if (user) {
+          let userData = {...user._doc};
+
+          if (userData && userData.profileImageUrl) {
+            data.profileImageUrl = userData.profileImageUrl;
+          }
+
+        }
+      })
+
     // Find the user with the supplied user id and update
     // that user's profile info.
-    const updatedDoc = await User.findOneAndUpdate(
+    const updatedDoc = await User.replaceOne(
       { _id: new mongoose.Types.ObjectId(_id) }, 
       data, 
       {
@@ -455,7 +470,7 @@ exports.resetPassword = async (req, res) => {
               BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
             };
         */        
-        let tokenBytes = crypto.randomBytes(32).toString('hex');
+        let tokenBytes = crypto.randomBytes(16).toString('hex');
 
         return bcrypt.hash(tokenBytes, config.BCRYPT_SALT, (err, hashedResetToken) => {
           if (err) {
