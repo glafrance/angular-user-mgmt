@@ -357,7 +357,7 @@ exports.uploadUserProfileImage = async (req, res) => {
       // two users might upload a file named "mypic.jpg", so it
       // might happen that one user's profile image gets wiped out.
       // So this is a TODO to investigate.
-      const userProfileImageUrl = `http://localhost:4002/images/${req.file.filename}`;
+      const userProfileImageUrl = `https://localhost:4002/images/${req.file.filename}`;
 
       await User.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(_id) }, 
@@ -455,69 +455,74 @@ exports.resetPassword = async (req, res) => {
               BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
             };
         */        
-        let resetToken = crypto.randomBytes(32).toString('hex');
-        const hash = await bcrypt.hash(resetToken, config.BCRYPT_SALT);
+        let tokenBytes = crypto.randomBytes(32).toString('hex');
 
-        PasswordResetToken.create({ _userEmail: user.email, resetToken})
-        .then(resetToken => {          
-          res.status(200).json({ 
-            result: constants.SUCCESS
-          });  
-  
-          // user here is the email address that will send the reset password email with link
-          // if gmail, pass should be the app password setup in the google account.
-          // Note that the sender email and gmail app password should be in the config file
-          // that is not in this repository. You should NEVER upload that config file to 
-          // a git repository.
-          //     server/config.js
-          //
-          // Here is the structure of the config file:
-          /*
-              module.exports = {
-                SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
-                SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
-                BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
-              };
-          */          
-          // If the sender of the reset password email is not Gmail then code changes 
-          // will be necessary here.
-          const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            port: 465,
-            auth: {
-              user: config.SENDER_EMAIL_ADDRESS,
-              pass: config.SENDER_APP_PASSWORD
-            }
-          });
-  
-  
-          // "from" here is the email address that will send the reset password email with link
-          const mailOptions = {
-            to: user.email,
-            from: config.SENDER_EMAIL_ADDRESS,
-            subject: 'User Manager Password Reset',
-            text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
-            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            'http://localhost:4200/response-reset-password/' + resetToken.resetToken + '\n\n' +
-            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        return bcrypt.hash(tokenBytes, config.BCRYPT_SALT, (err, hashedResetToken) => {
+          if (err) {
+            return res.status(401).json({ message: 'Error hashing password' });
           }
-  
-          transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-              console.log("sendMail err", err);
+
+          PasswordResetToken.create({ _userEmail: user.email, hashedResetToken})
+          .then(resetToken => {          
+            res.status(200).json({ 
+              result: constants.SUCCESS
+            });  
+    
+            // user here is the email address that will send the reset password email with link
+            // if gmail, pass should be the app password setup in the google account.
+            // Note that the sender email and gmail app password should be in the config file
+            // that is not in this repository. You should NEVER upload that config file to 
+            // a git repository.
+            //     server/config.js
+            //
+            // Here is the structure of the config file:
+            /*
+                module.exports = {
+                  SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
+                  SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
+                  BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
+                };
+            */          
+            // If the sender of the reset password email is not Gmail then code changes 
+            // will be necessary here.
+            const transporter = nodemailer.createTransport({
+              service: 'Gmail',
+              port: 465,
+              auth: {
+                user: config.SENDER_EMAIL_ADDRESS,
+                pass: config.SENDER_APP_PASSWORD
+              }
+            });
+    
+    
+            // "from" here is the email address that will send the reset password email with link
+            const mailOptions = {
+              to: user.email,
+              from: config.SENDER_EMAIL_ADDRESS,
+              subject: 'User Manager Password Reset',
+              text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
+              'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+              'http://localhost:4200/response-reset-password/' + resetToken.resetToken + '\n\n' +
+              'If you did not request this, please ignore this email and your password will remain unchanged.\n'
             }
-            if (info) {
-              // console.log("sendMail info", info);
-            }
+    
+            transporter.sendMail(mailOptions, (err, info) => {
+              if (err) {
+                console.log("sendMail err", err);
+              }
+              if (info) {
+                // console.log("sendMail info", info);
+              }
+            });
+          })
+          .catch((err) => {
+            console.log("Error creating reset password email and link - two", err);
+            return res.status(401).json({ 
+              result: constants.FAILURE,
+              error: err.message 
+            });
           });
-        })
-        .catch((err) => {
-          console.log("Error creating reset password email and link - two", err);
-          return res.status(401).json({ 
-            result: constants.FAILURE,
-            error: err.message 
-          });
-        });        
+        });
       })
       .catch((err) => {
         console.log("Error creating reset password email and link - three", err);
