@@ -4,3 +4,6 @@ localhost.pem
 
 user_management_public.key
 user_management.key
+
+# screenshots of the app
+/screenshots.tmp
