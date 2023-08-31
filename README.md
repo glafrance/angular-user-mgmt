@@ -18,7 +18,7 @@ The frontend uses these technologies:
 - [ngx-toastr](https://www.npmjs.com/package/ngx-toastr)
 - [SASS (for styling, supercharged CSS)](https://sass-lang.com)
 - [TypeScript](https://www.typescriptlang.org)
-- [rsjs BehaviorSubject, Observable](https://rxjs.dev/guide/overview)
+- [rxjs BehaviorSubject, Observable](https://rxjs.dev/guide/overview)
 
 The application includes these architectural features:
 - [Angular routing](https://angular.io/guide/routing-overview)
