@@ -71,7 +71,7 @@ You'll get errors if you try to use the Angular app as you have not yet started 
 
 #### If you click forgot password, you'll be prompted for your email address, and then you will receive an email auto-sent by the server with a link. When clicked the Angular app automatically launches and displays the reset password screen where you can enter a new password. The reset password link expires in one hour.
 
-### After logging in you will be directed to the user profile page, where you can enter additional, optional information, change your email, password, upload a profile photo:
+#### After logging in you will be directed to the user profile page, where you can enter additional, optional information, change your email, password, upload a profile photo:
 
 <img width="562" alt="profile-page" src="https://github.com/glafrance/angular-user-mgmt/assets/376137/39394ef1-fea6-4845-bcde-dd33369df7fc">
 
