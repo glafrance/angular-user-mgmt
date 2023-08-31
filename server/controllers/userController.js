@@ -326,10 +326,10 @@ exports.getUserProfileImage = (req, res) => {
               data: userData.profileImageUrl
             });  
           } else {
-            console.log("Error getting user profile image - one");
-            return res.status(401).json({ 
-              result: constants.FAILURE,
-              error: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR 
+            console.log("User profile image not found - one");
+            return res.status(200).json({ 
+              result: constants.SUCCESS,
+              message: constants.USER_PROFILE_IMAGE_COULD_NOT_BE_FOUND 
             });  
           }
         } else {

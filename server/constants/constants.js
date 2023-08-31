@@ -25,6 +25,7 @@ exports.SIGNIN_FAILURE = "Signin failed, please check your email and password an
 exports.USER_PROFILE_COULD_NOT_BE_SAVED_ERROR = "Updating your profile failed, please try again.";
 exports.USER_PROFILE_IMAGE_COULD_NOT_BE_UPLOADED_ERROR = "Uploading your profile image failed, please try again.";
 exports.USER_PROFILE_IMAGE_COULD_NOT_BE_RETRIEVED_ERROR = "Profile image could not be retrieved.";
+exports.USER_PROFILE_IMAGE_COULD_NOT_BE_FOUND = "Profile image could not be found.";
 exports.USER_PROFILE_COULD_NOT_BE_FOUND = "user_profile_could_not_be_found";
 exports.EMAIL_IS_REQUIRED = "Email is required.";
 exports.TOKEN_IS_REQUIRED = "Token is required.";

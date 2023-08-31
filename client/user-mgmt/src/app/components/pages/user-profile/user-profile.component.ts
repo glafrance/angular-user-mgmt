@@ -132,6 +132,8 @@ export class UserProfileComponent implements OnInit {
       next: (result) => {
         if (result && result.data) {
           this.profileImageSrc = result.data;
+        } else if (result && result.message) {
+          console.log(result.message);
         }
       }, 
       error: (err: any) => {
