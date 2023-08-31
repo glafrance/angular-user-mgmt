@@ -68,3 +68,10 @@ button {
 .bio-error {
   margin-top: 7px;
 }
+
+@media screen and (max-width: 1000px) {
+  // Ensure the profile page fields display in a single column on narrow screen widths.
+  .fields-container {
+    flex-direction: column;
+  }    
+}
