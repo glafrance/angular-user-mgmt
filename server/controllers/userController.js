@@ -1,3 +1,7 @@
+// Currently the one controller for the backend. 
+// Router file referencees the methods in this
+// file for the various API calls.
+
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -9,6 +13,7 @@ const PasswordResetToken = require("../models/password-reset-token");
 const User = require("../models/user");
 const utils = require("../utils/utils");
 
+// Signup the user, with the supplied email and password.
 exports.signupUser = (req, res) => {
   if (
     utils.isNotNullOrUndefined(req) &&
@@ -22,12 +27,32 @@ exports.signupUser = (req, res) => {
     User.findOne({ email })
       .then((user) => {
         if (user) {
+          // Can't signup the user as a user was found with the
+          // supplied email address.
           return res.status(401).json({ 
             result: constants.FAILURE,
             error: constants.USER_EXISTS_ERROR 
           });
         } else {
-          return bcrypt.hash(password, 10, (err, hash) => {
+          // Encrypt the supplied password as we never want
+          // to store plain-text passwords in the database.
+
+          // The config file is not in the repository for this code,
+          // you need to create it at the root of this server code.
+          // You need to add a property BCRYPT_SALT, can be a number,
+          // such as perhaps 18, it increases the security of the token.
+
+          //     server/config.js
+
+          // Here is the structure of the config file:
+          /*
+              module.exports = {
+                SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
+                SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
+                BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
+              };
+          */          
+          return bcrypt.hash(password, config.BCRYPT_SALT, (err, hash) => {
             if (err) {
               return res.status(401).json({ message: 'Error hashing password' });
             }
@@ -36,6 +61,9 @@ exports.signupUser = (req, res) => {
               password: hash
             };
 
+            // Create the new user signing up using the supplied 
+            // email address and the encrypted password, saving it
+            // in the database.
             User.create(body)
               .then(user => {
                 res.status(200).json({ result: constants.SUCCESS });
@@ -66,6 +94,7 @@ exports.signupUser = (req, res) => {
   }
 };
 
+// Signin the user with the supplied email address and password.
 exports.signinUser = (req, res) => {
   if (
     utils.isNotNullOrUndefined(req) &&
@@ -79,10 +108,23 @@ exports.signinUser = (req, res) => {
     User.findOne({ email })
       .then((user) => {
         if (user) {
+          // If we found the user email address in the database,
+          // then we need to encrypt the password supplied to
+          // this function and compare it with the encrypted 
+          // password we stored in the database when the user 
+          // signed up.
           const hashStoredInDB = user.password;
 
+          // bcrypt.compare encrypts the supplied password and compares it
+          // with the encrypted password we stored in the database on signup.
           bcrypt.compare(password, hashStoredInDB).then((checkPasswordResult) => {
             if (checkPasswordResult) {
+              // Passwords matched so create a JWT (JSON Web Token) and send it back
+              // to the Angular application in a secure cookie. After the user's 
+              // brower receives this cookie, it will be automatically sent to the
+              // server on every subsequent API call. Because we use the secure
+              // and httpOnly flags, the cookie (and thus the JWT) cannot be accessed
+              // by frontend JavaScript code, which makes this authorization token more secure.
               const jwt = utils.createJWT(user._id.toString());
               const sessionId = utils.generateSessionId();
 
@@ -124,6 +166,10 @@ exports.signinUser = (req, res) => {
   }
 };
 
+// Get the user profile info using the supplied user id.
+// The user id was provided by the backend API call 
+// signing in the user, so the frontend can send it back
+// when it tries to get the user profile info.
 exports.getUserProfile = (req, res) => {
   if (
     req && 
@@ -135,6 +181,9 @@ exports.getUserProfile = (req, res) => {
     User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
       .then((user) => {
         if (user) {
+          // A user with the supplied user id was found, so return
+          // the user profile info, after stripping out the 
+          // password, __v, and _id fields.
           let userData = {...user._doc};
           delete userData.password;
           delete userData.__v;
@@ -168,6 +217,9 @@ exports.getUserProfile = (req, res) => {
   }
 };
 
+// Save user profile info changes, because user when to the Angular
+// application profile page, made changes and submitted changes
+// to this backend API.
 exports.setUserProfile = async (req, res) => {
   if (
     req && 
@@ -179,6 +231,8 @@ exports.setUserProfile = async (req, res) => {
     const _id = req.params.userId;
     const data = req.body.data;
 
+    // Find the user with the supplied user id and update
+    // that user's profile info.
     const updatedDoc = await User.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(_id) }, 
       data, 
@@ -187,6 +241,9 @@ exports.setUserProfile = async (req, res) => {
       }
     );
 
+    // We find the user whose profile info was just changed
+    // and return the updated data to the Angualar application,
+    // after stripping out the password, __v, and _id fields.
     User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
       .then((user) => {
         if (user) {
@@ -223,6 +280,7 @@ exports.setUserProfile = async (req, res) => {
   }
 };
 
+// Get the user profile image.
 exports.getUserProfileImage = (req, res) => {
   if (
     req && 
@@ -234,6 +292,12 @@ exports.getUserProfileImage = (req, res) => {
     User.findOne({ _id: new mongoose.Types.ObjectId(_id) })
       .then((user) => {
         if (user) {
+          // If we found a user with the supplied user id then
+          // we return the profile image url for the user. 
+          // Note the url will be the profile image url 
+          // for where the image is stored on this server.
+          // TODO it might be possible for someone to get all
+          // users' profile images, so might need some rework.
           let userData = {...user._doc};
 
           if (userData && utils.isNotNullOrUndefined(userData.profileImageUrl)) {
@@ -272,6 +336,7 @@ exports.getUserProfileImage = (req, res) => {
   }
 };
 
+// Upload a user's profile image to the server.
 exports.uploadUserProfileImage = async (req, res) => {
   if (
     req && 
@@ -287,6 +352,11 @@ exports.uploadUserProfileImage = async (req, res) => {
         error: constants.USER_PROFILE_COULD_NOT_BE_UPLOADED_ERROR 
       });
     } else {
+      // Here is the profile image for the user's profile image.
+      // Note that the filename might not be unique, for example 
+      // two users might upload a file named "mypic.jpg", so it
+      // might happen that one user's profile image gets wiped out.
+      // So this is a TODO to investigate.
       const userProfileImageUrl = `http://localhost:4002/images/${req.file.filename}`;
 
       await User.findOneAndUpdate(
@@ -304,6 +374,8 @@ exports.uploadUserProfileImage = async (req, res) => {
           if (user) {
             let userData = {...user._doc};
 
+            // We verify the uploaded profile image url is now 
+            // in the user data, to determine the upload was a success.
             if (userData.profileImageUrl === userProfileImageUrl) {
               return res.status(200).json({ 
                 result: constants.SUCCESS,
@@ -341,6 +413,10 @@ exports.uploadUserProfileImage = async (req, res) => {
   }
 };
 
+// API call user makes to request an email be sent to
+// their email address, and that email will contain a
+// link that when clicked opens the Angular app on
+// the reset password page.
 exports.resetPassword = async (req, res) => {
   if (
     req && 
@@ -358,16 +434,53 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
+    // If we foung a user with the supplied email address,
+    // then delete all password reset tokens that might already
+    // exist for this user. This ensures that there will only
+    // be a single password reset token for the user.
     PasswordResetToken.deleteMany({ _userEmail: user.email})
       .then(() => {
-        PasswordResetToken.create({ _userEmail: user.email, resetToken: crypto.randomBytes(16).toString('hex') })
+        // Create a new password reset token for the user.
+
+        // The config file is not in the repository for this code,
+        // you need to create it at the root of this server code.
+        // You need to add a property BCRYPT_SALT, can be a number,
+        // such as perhaps 18, it increases the security of the token.
+
+        // Here is the structure of the config file:
+        /*
+            module.exports = {
+              SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
+              SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
+              BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
+            };
+        */        
+        let resetToken = crypto.randomBytes(32).toString('hex');
+        const hash = await bcrypt.hash(resetToken, config.BCRYPT_SALT);
+
+        PasswordResetToken.create({ _userEmail: user.email, resetToken})
         .then(resetToken => {          
           res.status(200).json({ 
             result: constants.SUCCESS
           });  
   
           // user here is the email address that will send the reset password email with link
-          // if gmail, pass should be the app password setup in the google account
+          // if gmail, pass should be the app password setup in the google account.
+          // Note that the sender email and gmail app password should be in the config file
+          // that is not in this repository. You should NEVER upload that config file to 
+          // a git repository.
+          //     server/config.js
+          //
+          // Here is the structure of the config file:
+          /*
+              module.exports = {
+                SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
+                SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
+                BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
+              };
+          */          
+          // If the sender of the reset password email is not Gmail then code changes 
+          // will be necessary here.
           const transporter = nodemailer.createTransport({
             service: 'Gmail',
             port: 465,
@@ -422,6 +535,7 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+// Angular app calls this function to validate the reset password token.
 exports.validatePasswordToken = async (req, res) => {
   if (
     utils.isNotNullOrUndefined(req) &&
@@ -440,6 +554,7 @@ exports.validatePasswordToken = async (req, res) => {
         });
       }
 
+      // If the supplied token was found for the user then return success.
       User.findOne({ _id: token._userId })
         .then(() => {
           return res.status(200).json({ 
@@ -461,6 +576,8 @@ exports.validatePasswordToken = async (req, res) => {
   }
 };
 
+// Change the user's password using the supplied new
+// password and the reset token supplied.
 exports.newPassword = async (req, res) => {
   if (
     utils.isNotNullOrUndefined(req) &&
@@ -479,7 +596,26 @@ exports.newPassword = async (req, res) => {
           email: userToken._userEmail
         }).then((user) => {
           if (user) {
-            return bcrypt.hash(newPassword, 10, (err, hash) => {
+            // If the reset password token was found, and a user was
+            // found for the email associated with that token, then
+            // encrypt and save the new password.
+
+            // The config file is not in the repository for this code,
+            // you need to create it at the root of this server code.
+            // You need to add a property BCRYPT_SALT, can be a number,
+            // such as perhaps 18, it increases the security of the token.
+
+            //     server/config.js
+
+            // Here is the structure of the config file:
+            /*
+                module.exports = {
+                  SENDER_EMAIL_ADDRESS: "GMAIL_EMAIL_ADDRESS_OF_RESET_PASSWORD_EMAIL_SENDER",
+                  SENDER_APP_PASSWORD: "GOOGLE_ACCOUNT_APP_PASSWORD_OF_RESET_PASSWORD_EMAIL_SENDER",
+                  BCRYPT_SALT: NUMBER SUCH AS 18 TO MAKE ENCRYPTING MORE SECURE
+                };
+            */
+            return bcrypt.hash(newPassword, config.BCRYPT_SALT, (err, hash) => {
               if (err) {
                 console.log("Error resetting password - one", err);
                 return res.status(401).json({ 
@@ -489,6 +625,7 @@ exports.newPassword = async (req, res) => {
               }
               user.password = hash;
               user.save().then((docs) => {
+                // Delete the just used password reset token.
                 PasswordResetToken.deleteOne({_userEmail: userToken._userEmail})
                   .then((docs) => {
                     console.log("token deleted", docs);

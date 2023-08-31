@@ -1,3 +1,5 @@
+// This file is the express route file for user routes.
+
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
@@ -5,6 +7,11 @@ const constants = require("../constants/constants");
 const multer = require("multer");
 const utils = require("../utils/utils");
 
+// multer is used to store profile image file users upload.
+// They are stored in a directory public/images at the
+// root of this server. The .gitignore for this server
+// prevents these user images from being uploaded to the 
+// git repository for this server.
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './public/images/');

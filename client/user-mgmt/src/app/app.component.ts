@@ -17,6 +17,9 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // On app initialization, see if user is already signed in, and see
+    // if local storage has the user id. This is so user does not have to 
+    // signin every time they refresh the browser page.
     const signedIn = this.localStorageService.getFromLocalStorage(Constants.SIGNED_IN_LOCAL_STORAGE_KEY);
     const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
 

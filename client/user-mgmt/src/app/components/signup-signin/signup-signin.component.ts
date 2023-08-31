@@ -17,10 +17,17 @@ import ValidationUtils from "src/app/utils/validationUtils";
 })
 export class SignupSigninComponent implements OnInit {
   title: string = "";
+
+  // These strings will be set depending on the mode,
+  // Signup or Signin. For example, when this popup first 
+  // displays, if the mode is Signup, then a message will
+  // ask them if they have already signed up, so they can
+  // click to switch the popup mode to Signin.
   signupSigninButtonText: string = "";
   switchSignupSigninMessage: string = "";
   switchActionMessage: string = "";
 
+  // Create the Angular reactive form.
   signupSigninForm: FormGroup = new FormGroup({
     email: new FormControl("", [
       Validators.required, 
@@ -45,15 +52,20 @@ export class SignupSigninComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // This sets the strings mentioned above based on the mode, Signup or Signin.
     this.setDynamicText();
 
+    // Add the form-level validator to ensure the user entered 
+    // password and password confirm match, when signing up.
     this.signupSigninForm.addValidators([ValidationUtils.passwordsMatch(this.password, this.passwordConfirm)]);
   }
 
+  // Angular reactive form field getters.
   get email() { return this.signupSigninForm.get("email") };
   get password() { return this.signupSigninForm.get("password") };
   get passwordConfirm() { return this.signupSigninForm.get("passwordConfirm") };
 
+  // This sets the strings mentioned above based on the mode, Signup or Signin.
   setDynamicText() {
     if (this.data && this.data.mode) {
       if (this.data.mode === Constants.SIGNUP) {
@@ -70,6 +82,9 @@ export class SignupSigninComponent implements OnInit {
     }
   }
 
+  // If user is on the signin mode popup, they can click
+  // to switch the popup to signup mode, if they have
+  // not yet signed up with the application, and visa versa.
   switchMode() {
     if (this.data && this.data.mode) {
       this.signupSigninForm.patchValue({
@@ -88,15 +103,21 @@ export class SignupSigninComponent implements OnInit {
       }
     }
 
+    // After changing popup modes, Signup or Signin,
+    // need to change the text of the dynamic strings
+    // mentioned at the top of this file based on the 
+    // new mode.
     this.setDynamicText();
   }
 
+  // Submit data to the backend to signup or signin the user.
   signupSignin() {
     const config = {
       email: this.email?.value,
       password: this.password?.value
     };
 
+    // Popup mode was Signup so signup the user with the application.
     if (this.data.mode === Constants.SIGNUP) {
       this.authService.signUp(config).subscribe({
         next: (result: any) => {
@@ -126,6 +147,7 @@ export class SignupSigninComponent implements OnInit {
         }
       });  
     } else if (this.data.mode === Constants.SIGNIN) {
+      // Popup mode was Signin so signin the user to the application.
       this.authService.signIn(config).subscribe({
         next: (result: any) => {
           if (
@@ -170,10 +192,17 @@ export class SignupSigninComponent implements OnInit {
     }
   }
 
+  // User clicked the forgot password link, so display a popup 
+  // user can enter their email address and get an email sent
+  // to them with a link that when clicked opens this application
+  // with a page to reset their password.
   forgotPassword() {
     this.dialog.open(RequestResetPasswordComponent);
   }
 
+  // Do not enable the submit button unless supplied
+  // email is valid format and password is valid,
+  // and password/password confirm field values match.
   disableButtons() {
     let disabled = true;
     const emailInvalid = Utils.isInvalid(this.email);

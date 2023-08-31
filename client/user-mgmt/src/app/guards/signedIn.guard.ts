@@ -1,3 +1,9 @@
+// Guard ensuring that protected routes can only be
+// accessed if user is signed in. If user is not 
+// signed in and then try to access a protected 
+// route they are redirected to the home page, 
+// where they can click to signin.
+
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { CanActivateFn } from "@angular/router";
 import { inject } from "@angular/core";

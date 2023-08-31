@@ -13,6 +13,8 @@ import Utils from "../../../../utils/utils";
   styleUrls: ["./request-reset-password.component.scss"]
 })
 export class RequestResetPasswordComponent {
+  // Create the Angular reactive form with one field, 
+  // email. The password reset email will be sent to that email address.
   resetPasswordForm: FormGroup = new FormGroup({
     email: new FormControl("", [
       Validators.required, 
@@ -30,6 +32,9 @@ export class RequestResetPasswordComponent {
 
   requestPasswordReset() {
     if (this.email && Utils.isNotNullOrUndefinedOrEmpty(this.email?.value)) {
+      // Send the user supplied email address to the server. If that email
+      // is in the system (someone signed up with that email), then an email
+      // will be sent to that email address user can click to reset password.
       this.userService.requestResetPassword(this.email.value).subscribe({
         next: (result: any) => {
           this.dialogRef.close();
@@ -48,6 +53,7 @@ export class RequestResetPasswordComponent {
     }
   }
 
+  // Don't enable the submit button unless user has entered a valid email address.
   disableButtons() {
     let disabled = true;
     const emailInvalid = Utils.isInvalid(this.email);

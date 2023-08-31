@@ -1,7 +1,15 @@
+<!--  
+  This is an example of using the page template component:
+    app/components/pages/page-template-one
+-->
 <app-page-template-one 
   [title]="title"
   [subTitle]="subTitle">
   <div class="page-container">
+    <!-- Angular reactive form, makes use of Angular Material controls:
+      https://angular.io/guide/reactive-forms
+      https://material.angular.io/components/input/overview
+    -->
     <form [formGroup]="userProfileForm">
       <div class="fields-container">
         <div class="fields-column">
@@ -10,6 +18,7 @@
               <mat-label>email address</mat-label>
               <input type="email" matInput formControlName="email" (input)="dataChanged($event, 'email')">
             </mat-form-field>
+            <!-- Show errors conditionally, tapping into the Angular reactive form errors and touched properties. -->
             <div class="errors-container">
               <p class="form-error-text" *ngIf="email?.errors?.['email'] && email?.touched">Invalid email format</p>    
             </div>

@@ -10,6 +10,8 @@ import Constants from "../../../constants/constants";
   styleUrls: ["./home.component.scss"]
 })
 export class HomeComponent implements OnInit {
+  // Used in the HTML template to display one of two buttons
+  // depending on whether or not the user is signed in.
   signedIn: boolean = false;
 
   constructor(
@@ -18,6 +20,10 @@ export class HomeComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+    /* We subscribe to the auth service signed in observable to
+        be updated on user signing in or signing out, to display
+        the appropriate button to the user.
+    */
     this.authService.getSignedInObservable().subscribe({
       next: (result: boolean) => {
         this.signedIn = result;
@@ -28,10 +34,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  // If user clicks to signup or signin we display the signup/signin popup.
   onSignupSignin() {
     this.authService.showSignupSignin(Constants.SIGNIN);    
   }
 
+  // User cliced to go to their profile page, so navigate them to their
+  // profile page programmatically.
   onVisitProfile() {
     this.router.navigateByUrl(Constants.ROUTER_URLS.USER_PROFILE);
   }

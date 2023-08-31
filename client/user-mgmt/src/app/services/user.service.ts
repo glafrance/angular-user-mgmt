@@ -1,3 +1,6 @@
+// This service performs operations related to the user.
+// Some operations like signup and signin are in auth service.
+
 import { BehaviorSubject, Observable } from "rxjs";
 import { Injectable } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
@@ -17,12 +20,21 @@ export class UserService {
     private toastr: ToastrService
   ) {}
 
+  // User profile BehaviorSubject the profile page (and other pages if necessary)
+  // can subscribe to in order to be notified if user profile changes.
+  // For example, profile page user goes to in order to change user profile information
+  // subscribes so when user submits changed profile data the profile page can 
+  // be updated asynchronously when the data has been successfully changed on backend.
   _userProfileObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
+  // Components call this method, and subscribe to the returned value, providing an 
+  // object with two properties, next and error, these property values are callbacks
+  // executed if the user profile update succeeds or errors out. 
   getUserProfileObservable(): BehaviorSubject<any> {
     return this._userProfileObservable;
   }
 
+  // Call the HttpService to actually submit changes to update the user profile info.
   getUserProfile() {
     const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
 
@@ -50,6 +62,10 @@ export class UserService {
     }
   }
 
+  // Call the HttpService to get the user profile information, for example when
+  // user navigates to the user profile page to change information there.
+  // Notice we first get the user ID stored in local storage. We do this because
+  // if the user has not signed in then they cannot see their user profile info.
   setUserProfile(userData: any) {
     let resultObservable: any = new Observable();
 
@@ -92,12 +108,18 @@ export class UserService {
     return resultObservable;
   }
 
+  // User profile image BehaviorSubject the profile page (and other pages if necessary)
+  // can subscribe to in order to be notified if user profile image changes.
   _userProfileImageObservable: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
+  // Components call this method, and subscribe to the returned value, providing an 
+  // object with two properties, next and error, these property values are callbacks
+  // executed if the user profile image update succeeds or errors out. 
   getUserProfileImageObservable(): BehaviorSubject<any> {
     return this._userProfileImageObservable;
   }
 
+  // Call the HttpService to get the user profile image.
   getUserProfileImage() {
     const userId = this.localStorageService.getFromLocalStorage(Constants.USER_ID_LOCAL_STORAGE_KEY);
 
@@ -125,6 +147,7 @@ export class UserService {
     }
   }
 
+  // Call the HttpService to actually upload user profile image.
   uploadUserProfileImage(profileImage: File) {
     let resultObservable: any = new Observable();
 
@@ -151,6 +174,8 @@ export class UserService {
     return resultObservable;
   }
 
+  // Call the HttpService to request a password reset email
+  // be sent to the user supplied email address.
   requestResetPassword(email: string) {
     let resultObservable: any = new Observable();
 
@@ -170,6 +195,11 @@ export class UserService {
     return resultObservable;
   }
 
+  // Call the HttpService to actually reset the password.
+  // We also send the reset password token that was extracted
+  // from the password reset link in the email sent to the
+  // user's email address so the server can validate this
+  // is a valid password reset attempt.
   getNewPassword(resetToken: string, newPassword: string) {
     let resultObservable: any = new Observable();
 
@@ -192,6 +222,8 @@ export class UserService {
     return resultObservable;
   }
 
+  // Call the HttpService to make a backend API call
+  // to validate the reset password token.
   validatePasswordToken(resetToken: string) {
     let resultObservable: any = new Observable();
 

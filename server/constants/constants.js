@@ -1,4 +1,10 @@
-// Route constants
+// Constants for strings that might appear in
+// more than one place in code, to avoid typos
+// that can result in hard to fix bugs. More
+// important in a larger app, but here to 
+// provide the base for a well-architected app.
+
+// Route constants used by express router for API calls.
 exports.PROFILE_IMAGE = "profile-image";
 exports.PROFILE = "profile";
 exports.SIGNIN = "signin";

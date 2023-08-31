@@ -1,4 +1,8 @@
+// Constants for strings that might appear in multiple areas of code,
+// so typos do not result in hard to fix bugs.
 export default class Constants {
+  // Angular routing uses these strings to know which page to 
+  // display during application navigation and routing.
   public static ROUTER_URLS = {
     EMPTY: "/",
     HOME: "home",
@@ -6,17 +10,16 @@ export default class Constants {
     USER_PROFILE: "user-profile"
   };
 
+  // General constants
   public static SIGNIN = "Signin";
   public static SIGNUP = "Signup";
   public static USER_MANAGER = "User Manager";
   public static USER_ID = "userId";
   public static DATA = "data";
   public static BIO_BLURB = "bioBlurb";
-
   public static INVALID = "INVALID";
 
-  public static BASE_URL = "https://localhost:4002";
-
+  // Constants for backend calls, HTTP methods.
   public static HTTP_METHODS = {
     GET: "get",
     POST: "post",
@@ -24,6 +27,14 @@ export default class Constants {
     PUT: "put"
   };
 
+  // The base url for the backend, here assumed to be
+  // on localhost port 4002. TODO: implement environment
+  // system allowing for development (localhost),
+  // production, staging, etc. environments.
+  public static BASE_URL = "https://localhost:4002";
+
+  // Backend REST API endpoints, implemented in the 
+  // backend code, for getting/saving data to the backend.
   public static API_ENDPOINTS = {
     PROFILE: "user/profile",
     PROFILE_IMAGE: "user/profile-image",
@@ -35,13 +46,13 @@ export default class Constants {
 
   };
 
-  // Response flags
+  // Response flags for backend API calls.
   public static RESULT = "result";
   public static SUCCESS = "success";
   public static FAILURE = "failure";
   public static ERROR = "error";
 
-  // Local storage keys
+  // Local storage keys for data stored in local storage.
   public static SIGNED_IN_LOCAL_STORAGE_KEY = "signed_in";
   public static USER_ID_LOCAL_STORAGE_KEY = "userId";
 }

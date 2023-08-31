@@ -1,3 +1,7 @@
+/* This Component is for a user profile page, where a user
+    can update their information, such as email and password,
+    address and phone numbers, profile image etc.
+*/
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ToastrService } from 'ngx-toastr';
@@ -15,7 +19,11 @@ import ValidationUtils from "src/app/utils/validationUtils";
 export class UserProfileComponent implements OnInit {
   title: string = "Profile Page";
   subTitle: string = "Manage your information and settings on this page";
+
+  // This allows us to enable the save profile button only when 
+  // user has made changes to their profile data.
   formDataChanged: boolean = false;
+
   profileImage: any;
   fileToUpload?: File;
   profileImageSrc: any;
@@ -30,6 +38,10 @@ export class UserProfileComponent implements OnInit {
     value: ""
   };
 
+  /* When this page is first displayed we populate this object
+     with user's current profile data, and we use this to
+     detect if user has made any profile data changes.
+  */
   originalData: any = {
     email: "",
     password: "",
@@ -47,6 +59,7 @@ export class UserProfileComponent implements OnInit {
     bioBlurb: ""
   };
 
+  // Creating the Angular reactive form.
   userProfileForm: FormGroup = new FormGroup({
     email: new FormControl("", [
       Validators.email
@@ -75,18 +88,28 @@ export class UserProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    /* The validator checking if password and confirm password field values
+       match is at the form level, and we use a custom validator:
+         app/utils/validationUtils.ts
+    */
     this.userProfileForm.addValidators([ValidationUtils.passwordsMatch(this.password, this.passwordConfirm)]);
 
+    // This allows us to populate the page with current user profile data,
+    // and to refresh the UI after user has saved profile data changes. 
     this.userService.getUserProfileObservable().subscribe({
       next: (result: any) => {
         if (result && result.data) {
           const data = result.data;
 
           if (data[Constants.BIO_BLURB]) {
+            // The bio blurb is not managed by the reactive form,
+            // so we set the value manually and then delete it,
+            // so it doesn't interfere with updating the form values.
             this.bioBlurb.value = data[Constants.BIO_BLURB];
             delete data[Constants.BIO_BLURB];
           }
 
+          // Angular reactive form way of updating form data values.
           this.userProfileForm.patchValue({
             ...data
           });
@@ -97,6 +120,8 @@ export class UserProfileComponent implements OnInit {
       }
     });
 
+    // The profile image is not managed by the Angular reactive form
+    // so we subscribe to changes to set the initial and updated image info.
     this.userService.getUserProfileImageObservable().subscribe({
       next: (result) => {
         if (result && result.data) {
@@ -108,10 +133,13 @@ export class UserProfileComponent implements OnInit {
       }
     });
 
+    // Here we get the current user profile data and user profile image
+    // data when this page first renders.
     this.userService.getUserProfile();
     this.userService.getUserProfileImage();
   }
 
+  // Angular reactive form getters for form fields.
   get email() { return this.userProfileForm.get("email") };
   get password() { return this.userProfileForm.get("password") };
   get passwordConfirm() { return this.userProfileForm.get("passwordConfirm") };
@@ -126,6 +154,9 @@ export class UserProfileComponent implements OnInit {
   get mobilePhone() { return this.userProfileForm.get("mobilePhone") };
   get workPhone() { return this.userProfileForm.get("workPhone") };
 
+  // Method to compare a changed form field value with the original
+  // value when page was first loaded, to detect if user made any
+  // changes to their profile data.
   dataChanged(evt: any, field: string) {
     let value = evt.target.value;    
 
@@ -137,14 +168,19 @@ export class UserProfileComponent implements OnInit {
 
     this.formDataChanged = (value !== originalValue);
 
+    // Bio blurb is not managed by the reactive form, 
+    // so we check for differences differently.
     if (field === "bioBlurb") {
       this.bioBlurb.value = value;
 
       this.bioBlurb.changed = (value !== originalValue);
 
+      // If the value changed, reset any bio blurb min and max length errors.
       this.bioBlurb.errors.minlength = false;
       this.bioBlurb.errors.maxlength = false;
 
+      // After resetting bio blurb length errors, check 
+      // length of new value to trigger errors if necessary.
       if (Utils.isNotNullOrUndefinedOrEmpty(value)) {
         this.bioBlurb.errors.minlength = value.length < 50;
         this.bioBlurb.errors.maxlength = value.length > 1000;  
@@ -184,10 +220,15 @@ export class UserProfileComponent implements OnInit {
     return false;
   }
 
+  // Bio blurb is not controlled by the reactive form, 
+  // so we manage its touched property manually.
   onBioBlurbBlur() {
     this.bioBlurb.touched = true;
   }
 
+  // Process the image user has selected for upload.
+  // This allows us to show the image in the profile
+  // page before they upload.
   onSelectImage(evt: any) {
     const fileInput = evt.target;
 
@@ -221,6 +262,7 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
+  // Submit user profile changes, form data and profile image.
   submitUserProfile() {
     const data = this.getValidProfileData();
 
@@ -243,6 +285,7 @@ export class UserProfileComponent implements OnInit {
     this.userService.setUserProfile(data);
   }
 
+  // User to get the user profile form data.
   getValidProfileData() {
     let data = this.userProfileForm.value;
 
@@ -252,12 +295,15 @@ export class UserProfileComponent implements OnInit {
       Object.keys(data).length
     ) {
       for (let key of Object.keys(data)) {
+        // Delete data values whose values are null, undefined, or empty.
         if (Utils.isNullOrUndefinedOrEmpty(data[key])) {
           delete data[key];
         }
       }
     }
 
+    // Bio blurb is not managed by the Angular reactive form,
+    // so add the bio blurb to the data.
     if (this.bioBlurb.value) {
       data[Constants.BIO_BLURB] = this.bioBlurb.value;
     }

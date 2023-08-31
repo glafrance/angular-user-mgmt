@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 
 import { AuthService } from "src/app/services/auth.service";
@@ -15,7 +15,13 @@ import ValidationUtils from "src/app/utils/validationUtils";
   styleUrls: ["./response-reset-password.component.scss"]
 })
 export class ResponseResetPasswordComponent implements OnInit {
+  // The token will be at the end of the reset password link that is in
+  // the email sent to the user when they entered their email address
+  // in the reset password request popup. In this component we will extract
+  // that token and send it to the server for validation.
   token?: string;
+
+  // Create the Angular reactive form for the password and password confirm fields.
   forgotPasswordForm: FormGroup = new FormGroup({
     password: new FormControl("", [
       Validators.required, 
@@ -29,30 +35,39 @@ export class ResponseResetPasswordComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router,
     private toastr: ToastrService,
     private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    // Get the password reset token from the browser url.
     if (this.route && this.route.snapshot && this.route.snapshot.params && this.route.snapshot.params["token"]) {
       this.token = this.route.snapshot.params["token"];
     }
 
+    // Add the form-level password/password confirm matches validator.
     this.forgotPasswordForm.addValidators([ValidationUtils.passwordsMatch(this.password, this.passwordConfirm)]);
   }
 
+  // Angular reactive form field getters.
   get password() { return this.forgotPasswordForm.get("password") };
   get passwordConfirm() { return this.forgotPasswordForm.get("passwordConfirm") };
 
+  // Submit the new password to the backend so the user can change their password.
   submit() {
     if (this.password && this.password.value && this.token) {
       const password = this.password.value;
       const token = this.token;
       
+      // First validate the password reset token that was taken from the browser url.
+      // It is the token that was in the link in the email sent to the user's email
+      // address when user entered their email in this application's request reset 
+      // password popup.
       this.userService.validatePasswordToken(this.token).subscribe({
         next: (result: any) => {
           if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
+            // If the token was valid then make a backend call to actually change the 
+            // user's password to the one they entered in this component's form.s
             this.userService.getNewPassword(token, password).subscribe({
               next: (result: any) => {
                 if (result && result[Constants.RESULT] && result[Constants.RESULT] === Constants.SUCCESS) {
@@ -77,6 +92,8 @@ export class ResponseResetPasswordComponent implements OnInit {
     }
   }
 
+  // Submit button should only be enabled if user entered a properly formatted 
+  // email address, and the password/password confirm fields values match.
   disableButtons() {
     let disabled = true;
     const passwordInvalid = Utils.isInvalid(this.password);

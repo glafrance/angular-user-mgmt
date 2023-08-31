@@ -9,6 +9,8 @@
     <h4 class="slogan"><em>User Management Made Easy</em></h4>
   </div>
   <div class="menu-container">
+    <!-- Conditionally show Signup/Singin or Signout depending 
+      on whether or not the user is currently signed in -->
     <h3 *ngIf="!signedIn" (click)="onSignupSignin()">Signup/Signin</h3>
     <h3 *ngIf="signedIn" (click)="onSignout()">Signout</h3>
   </div>
