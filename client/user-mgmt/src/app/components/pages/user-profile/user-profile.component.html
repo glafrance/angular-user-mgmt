@@ -172,6 +172,7 @@
           #bioBlurbElemRef 
           id="bioBlurbField" 
           class="bio-blurb" 
+          [value]="bioBlurb.value"
           (input)="dataChanged($event, 'bioBlurb')"
           (blur)="onBioBlurbBlur()"
           placeholder="bio (a bit about you)"></textarea>

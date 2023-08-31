@@ -27,6 +27,7 @@ export class UserProfileComponent implements OnInit {
   // Also want to enable the save profile button if user 
   // selected a different profile image.
   profileImageChanged: boolean = false;
+  profileImageName: string = "";
 
   profileImage: any;
   fileToUpload?: File;
@@ -110,7 +111,6 @@ export class UserProfileComponent implements OnInit {
             // so we set the value manually and then delete it,
             // so it doesn't interfere with updating the form values.
             this.bioBlurb.value = data[Constants.BIO_BLURB];
-            delete data[Constants.BIO_BLURB];
           }
 
           // Angular reactive form way of updating form data values.
@@ -171,7 +171,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     if (field === Constants.PROFILE_IMAGE) {
-      this.profileImageChanged = value !== this.profileImage;
+      this.profileImageChanged = value !== this.profileImageName;
     } else {  
       const originalValue = this.originalData[field];
   
@@ -224,9 +224,11 @@ export class UserProfileComponent implements OnInit {
       return true;
     }
 
-    if (
-      (userChangedFormData && formIsInvalid) || (userChangedBioBlurb && bioBlurbErrors)
-    ) {
+    if (userChangedFormData && formIsInvalid) {
+      return true;
+    }
+
+    if (userChangedBioBlurb && bioBlurbErrors) {
       return true;
     }
 
@@ -253,7 +255,7 @@ export class UserProfileComponent implements OnInit {
       const files = fileInput.files;
       const profileImageFile = files[0];
       const name = profileImageFile.name;
-      this.profileImage = name;
+      this.profileImageName = name;
       const size = profileImageFile.size;
 
       if (size > 1048576) {
@@ -278,18 +280,18 @@ export class UserProfileComponent implements OnInit {
   submitUserProfile() {
     const data = this.getValidProfileData();
 
-    if (this.fileToUpload) {
+    if (this.fileToUpload && this.profileImageChanged) {
       this.userService.uploadUserProfileImage(this.fileToUpload).subscribe({
         next: (result: any) => {
           // console.log(result);
           if (result) {                    
-            console.log("UserService - successfully uploaded user profile image");
+            this.toastr.success("Your profile image was successfully changed.", "Profile Image Changed");
           } else {
             console.log("UserService - error uploading user profile image, no result");
           }
         },
         error: (err: any) => {
-          console.log("UserService - error uploading user profile image", err);
+          this.toastr.success("Error changing your profile image.", "Error Changing Image");
         }
       });
     }
@@ -297,6 +299,15 @@ export class UserProfileComponent implements OnInit {
     if (this.formDataChanged) {
       this.userService.setUserProfile(data);
     }
+
+    this.formDataChanged = false;
+    this.profileImageChanged = false;
+    this.fileToUpload = undefined;
+    this.bioBlurb.changed = false;
+    this.bioBlurb.touched = false;
+    this.bioBlurb.errors.minlength = false;
+    this.bioBlurb.errors.maxlength = false;
+
   }
 
   // User to get the user profile form data.
