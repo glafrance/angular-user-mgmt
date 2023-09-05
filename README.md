@@ -32,7 +32,7 @@ Simply clone the examplae backend repository, and place it in a folder named "se
 - clone this repository
 - open a shell window and CD to the "client/user-mgmt" directory
 - execute "npm install" to install the required npm packages
-- follow [this blog post] (https://blog.bitsrc.io/using-https-for-local-development-for-react-angular-and-node-fdfaf69693cd) to create a localhost certificate and place them in the root of where this repository is cloned
+- follow [this blog post](https://blog.bitsrc.io/using-https-for-local-development-for-react-angular-and-node-fdfaf69693cd) to create a localhost certificate and place them in the root of where this repository is cloned
 - execute "npm start" to start the application ("ng serve --ssl true --ssl-key ../../localhost-key.pem --ssl-cert ../../localhost.pem")
 - View the application via this browser url: https://localhost:4200 (you might need to do this in a Chrome incognito window)
 
