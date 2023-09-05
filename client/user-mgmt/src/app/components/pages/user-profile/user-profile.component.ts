@@ -293,7 +293,7 @@ export class UserProfileComponent implements OnInit {
           }
         },
         error: (err: any) => {
-          this.toastr.success("Error changing your profile image.", "Error Changing Image");
+          this.toastr.error("Error changing your profile image.", "Error Changing Image");
         }
       });
     }
