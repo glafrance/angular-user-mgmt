@@ -7,3 +7,6 @@ user_management.key
 
 # screenshots of the app
 /screenshots.tmp
+
+# server files copied from another github repository
+/server
