@@ -15,16 +15,6 @@
         <div class="fields-column">
           <div class="form-control-container">
             <mat-form-field>
-              <mat-label>email address</mat-label>
-              <input type="email" matInput formControlName="email" (input)="dataChanged($event, 'email')">
-            </mat-form-field>
-            <!-- Show errors conditionally, tapping into the Angular reactive form errors and touched properties. -->
-            <div class="errors-container">
-              <p class="form-error-text" *ngIf="email?.errors?.['email'] && email?.touched">Invalid email format</p>    
-            </div>
-          </div>  
-          <div class="form-control-container">
-            <mat-form-field>
               <mat-label>password</mat-label>
               <input type="password" matInput formControlName="password" (input)="dataChanged($event, 'password')">
             </mat-form-field>
@@ -76,30 +66,24 @@
               <p class="form-error-text" *ngIf="(homePhone?.errors?.['maxlength']) && homePhone?.touched">Maximum length 10 characters</p>
             </div>
           </div>
-          <div class="account-image-container">
-            <p>Account Image</p>
-            <mat-icon 
-              *ngIf="!profileImageSrc"
-              class="account-image-icon" 
-              aria-hidden="false" 
-              aria-label="account box icon" 
-              fontIcon="account_box"
-              (click)="imageUpload.click()"></mat-icon>
-              <img 
-                *ngIf="profileImageSrc" 
-                class="profile-image"
-                [src]="profileImageSrc"
-                (click)="imageUpload.click()" />
-            <input 
-              #imageUpload 
-              type="file" 
-              accept="image/png, image/jpeg" 
-              style="display:none"
-              [(ngModel)]="profileImage"
-              (change)="onSelectImage($event)"
-              (input)="dataChanged($event, 'profileImage')"
-              [ngModelOptions]="{standalone: true}"/> 
+          <div class="form-control-container">
+            <mat-form-field>
+              <mat-label>mobile phone</mat-label>
+              <input type="text" matInput formControlName="mobilePhone" (input)="dataChanged($event, 'mobilePhone')">
+            </mat-form-field>
+            <div class="errors-container">
+              <p class="form-error-text" *ngIf="(mobilePhone?.errors?.['maxlength']) && mobilePhone?.touched">Maximum length 10 characters</p>
+            </div>
           </div>
+          <div class="form-control-container">
+            <mat-form-field>
+              <mat-label>work phone</mat-label>
+              <input type="text" matInput formControlName="workPhone" (input)="dataChanged($event, 'workPhone')">
+            </mat-form-field>
+            <div class="errors-container">
+              <p class="form-error-text" *ngIf="(workPhone?.errors?.['maxlength']) && workPhone?.touched">Maximum length 10 characters</p>
+            </div>
+          </div>          
         </div>        
         <div class="fields-column">
           <div class="form-control-container">
@@ -147,24 +131,30 @@
               <p class="form-error-text" *ngIf="(postalCode?.errors?.['maxlength']) && postalCode?.touched">Maximum length 10 characters</p>
             </div>
           </div>
-          <div class="form-control-container">
-            <mat-form-field>
-              <mat-label>mobile phone</mat-label>
-              <input type="text" matInput formControlName="mobilePhone" (input)="dataChanged($event, 'mobilePhone')">
-            </mat-form-field>
-            <div class="errors-container">
-              <p class="form-error-text" *ngIf="(mobilePhone?.errors?.['maxlength']) && mobilePhone?.touched">Maximum length 10 characters</p>
-            </div>
+          <div class="account-image-container">
+            <p>Account Image</p>
+            <mat-icon 
+              *ngIf="!profileImageSrc"
+              class="account-image-icon" 
+              aria-hidden="false" 
+              aria-label="account box icon" 
+              fontIcon="account_box"
+              (click)="imageUpload.click()"></mat-icon>
+              <img 
+                *ngIf="profileImageSrc" 
+                class="profile-image"
+                [src]="profileImageSrc"
+                (click)="imageUpload.click()" />
+            <input 
+              #imageUpload 
+              type="file" 
+              accept="image/png, image/jpeg" 
+              style="display:none"
+              [(ngModel)]="profileImage"
+              (change)="onSelectImage($event)"
+              (input)="dataChanged($event, 'profileImage')"
+              [ngModelOptions]="{standalone: true}"/> 
           </div>
-          <div class="form-control-container">
-            <mat-form-field>
-              <mat-label>work phone</mat-label>
-              <input type="text" matInput formControlName="workPhone" (input)="dataChanged($event, 'workPhone')">
-            </mat-form-field>
-            <div class="errors-container">
-              <p class="form-error-text" *ngIf="(workPhone?.errors?.['maxlength']) && workPhone?.touched">Maximum length 10 characters</p>
-            </div>
-          </div>          
         </div>        
       </div>
       <div class="form-control-container">

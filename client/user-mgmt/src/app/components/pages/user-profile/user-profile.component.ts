@@ -1,5 +1,5 @@
 /* This Component is for a user profile page, where a user
-    can update their information, such as email and password,
+    can update their information, such as password,
     address and phone numbers, profile image etc.
 */
 import { Component, OnInit } from "@angular/core";
@@ -48,7 +48,6 @@ export class UserProfileComponent implements OnInit {
      detect if user has made any profile data changes.
   */
   originalData: any = {
-    email: "",
     password: "",
     passwordConfirm: "",
     firstName: "",
@@ -66,9 +65,6 @@ export class UserProfileComponent implements OnInit {
 
   // Creating the Angular reactive form.
   userProfileForm: FormGroup = new FormGroup({
-    email: new FormControl("", [
-      Validators.email
-    ]),
     password: new FormControl("", [
       Validators.minLength(8),
       Validators.maxLength(15),
@@ -148,7 +144,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   // Angular reactive form getters for form fields.
-  get email() { return this.userProfileForm.get("email") };
   get password() { return this.userProfileForm.get("password") };
   get passwordConfirm() { return this.userProfileForm.get("passwordConfirm") };
   get firstName() { return this.userProfileForm.get("firstName") };
